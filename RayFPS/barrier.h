@@ -1,15 +1,14 @@
 #include "pge.h"
-#include "collision.h"
 #include "traceable.h"
 
 class Barrier : public Traceable {
 public:
-    Barrier(olc::vf2d p1, olc::vf2d p2) {
+    Barrier(olc::vf2d p1, olc::vf2d p2) : p1(p1), p2(p2) {
         dir = p2 - p1;
         t = dir.mag();
         dir = dir.norm();
     }
-    Barrier(olc::vf2d p1, olc::vf2d dir, float length) {
+    Barrier(olc::vf2d p1, olc::vf2d dir, float length) : p1(p1), dir(dir.norm()), t(t) {
         p2 = p1 + (dir * length);
     }
 
@@ -20,11 +19,10 @@ private:
     olc::vf2d dir = {0, 0};
 
 public:
-    olc::vf2d p1() {return p1;}
-    olc::vf2d p2() {return p2;}
-    olc::vf2d dir() {return dir;}
+    olc::vf2d getP1() {return p1;}
+    olc::vf2d getP2() {return p2;}
+    olc::vf2d getDir() {return dir;}
     float mag() {return t;}
 
-    Collision trace(Ray& ray) override;
-
+    Collision* trace(Ray &ray) override;
 };

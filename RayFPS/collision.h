@@ -1,3 +1,5 @@
+#pragma once
+
 #include "pge.h"
 #include "ray.h"
 

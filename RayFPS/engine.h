@@ -1,8 +1,6 @@
 
 #include "pge.h"
 #include "barrier.h"
-#include "ray.h"
-#include "collision.h"
 
 class Engine : public olc::PixelGameEngine {
 private:
