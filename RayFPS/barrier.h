@@ -10,6 +10,7 @@ public:
     }
     Barrier(olc::vf2d p1, olc::vf2d dir, float length) : p1(p1), dir(dir.norm()), t(t) {
         p2 = p1 + (dir * length);
+        t = length;
     }
 
 private:
