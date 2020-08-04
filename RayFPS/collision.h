@@ -14,4 +14,8 @@ public:
         
     }
 
+    void render(olc::PixelGameEngine *pge) {
+        pge->DrawLine(ray->pos, pos);
+    }
+
 };

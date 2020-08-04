@@ -1,6 +1,5 @@
 
 #include "barrier.h"
-#include "traceable.h"
 
 Collision* Barrier::trace(Ray &ray) {
 

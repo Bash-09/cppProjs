@@ -1,3 +1,5 @@
+#pragma once
+
 #include "pge.h"
 #include "traceable.h"
 
@@ -8,7 +10,7 @@ public:
         t = dir.mag();
         dir = dir.norm();
     }
-    Barrier(olc::vf2d p1, olc::vf2d dir, float length) : p1(p1), dir(dir.norm()), t(t) {
+    Barrier(olc::vf2d p1, olc::vf2d direc, float length) : p1(p1), dir(direc.norm()), t(t) {
         p2 = p1 + (dir * length);
         t = length;
     }
@@ -24,6 +26,7 @@ public:
     olc::vf2d getP2() {return p2;}
     olc::vf2d getDir() {return dir;}
     float mag() {return t;}
+    float height = 1;
 
     Collision* trace(Ray &ray) override;
 };
