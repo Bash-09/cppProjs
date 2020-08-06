@@ -4,3 +4,5 @@
 #include <string>
 
 void print(std::string in);
+
+void print2();

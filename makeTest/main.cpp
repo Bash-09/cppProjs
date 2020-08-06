@@ -3,8 +3,9 @@
 
 int main() {
 
+    print2();
     print("HelloWorld");
-    std::cout << "Hi" << std::endl;
+
 
     return 0;
 }
