@@ -2,12 +2,20 @@
 
 #include "pge.h"
 #include "collideables.h"
+#include <vector>
 
 class Player {
+
+private:
+    std::vector<Barrier**> bars;
 
 public:
     Player() {}
     ~Player() {}
+
+    void add(Barrier** bar) {
+        bars.push_back(bar);
+    }
 
     olc::vf2d pos = {0, 0};
     olc::vf2d dir = {0, -1};
@@ -34,7 +42,16 @@ public:
 
     float fov = 90;
 
-    void renderFP(olc::PixelGameEngine* pge, Barrier &b);
-    void renderMap(olc::PixelGameEngine* pge, Barrier &b, olc::vi2d middle);
+    void renderFP(olc::PixelGameEngine *pge, olc::vi2d res);
+    void renderFP(olc::PixelGameEngine *pge, olc::vi2d res, Barrier* bar);
+    void renderMap(olc::PixelGameEngine *pge, olc::vi2d res);
+
+    void remove(Barrier* bar) {
+        for(std::vector<Barrier**>::iterator b = bars.begin(); b != bars.end(); b++) {
+            if(**b == bar) b = bars.erase(b);
+        }
+    }
+private:
+    Collision* castRay(Ray& ray);
 
 };

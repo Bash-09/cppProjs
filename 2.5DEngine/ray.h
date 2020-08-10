@@ -21,14 +21,14 @@ class Collideable;
 
 class Collision {
 public:
-    Collision(Ray *ray, Collideable *target, float t) : ray(ray), target(target), t(t), pos(ray->pos + ray->dir * t) {
+    Collision(Ray ray, Collideable *target, float t) : ray(ray), target(target), t(t), pos(ray.pos + ray.dir * t) {
 
     }
     ~Collision() {
-        delete ray;
+        
     }
 
-    const Ray *ray;
+    const Ray ray;
     const Collideable *target;
     const float t;
     const olc::vf2d pos;

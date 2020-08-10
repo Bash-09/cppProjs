@@ -6,7 +6,10 @@
 
 class Barrier : public Collideable {
 public:
-    Barrier(olc::vf2d p1, olc::vf2d p2) : p1(p1), p2(p2), dir((p2 - p1).norm()), t(dir.mag()) {
+    olc::Decal* texture = nullptr;
+    float textureWidth = 100;
+
+    Barrier(olc::vf2d p1, olc::vf2d p2) : p1(p1), p2(p2), dir((p2 - p1).norm()), t((p2 - p1).mag()) {
 
     }
     Barrier(olc::vf2d p1, olc::vf2d dir, float length) : p1(p1), dir(dir.norm()), t(length) {

@@ -27,6 +27,6 @@ Collision* Barrier::trace(Ray &ray) {
 
     if(t1 < 0 || t2 < 0 || t2 > t) return nullptr;
 
-    return new Collision(&ray, this, t1);
+    return new Collision(ray, this, t1);
 
 }

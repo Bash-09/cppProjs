@@ -10,11 +10,13 @@ class Main : public olc::PixelGameEngine{
 public:
     bool OnUserCreate() override;
     bool OnUserUpdate(float fElapsedTime) override;
+
+    void move(float fElapsedTime);
 };
 
 olc::vi2d res = {600, 600};
 bool fullscreen = false;
-bool vsync = false;
+bool vsync = true;
 
 int main() {
 
@@ -29,28 +31,83 @@ int main() {
 *
 */
 
-Barrier b1 = Barrier({300, 100}, {100, 300});
+Barrier* b1 = new Barrier({300, 100}, {100, 300});
+
+Barrier* b2 = new Barrier({0, 0}, {0, (float)res.y});
+Barrier* b3 = new Barrier({0, (float)res.y}, {(float)res.x, (float)res.y});
+Barrier* b4 = new Barrier({(float)res.x, (float)res.y}, {(float)res.x, 0});
+
+Barrier* flower = new Barrier({200, 200}, {200, 230});
+Barrier* flower2 = new Barrier({150, 150}, {150, 120});
+Barrier* flower3 = new Barrier({110, 170}, {110, 140});
+Barrier* flower4 = new Barrier({180, 150}, {210, 150});
+
 
 Player p;
 
+olc::Sprite spr;
+olc::Decal* dec;
+
+olc::Sprite flow;
+olc::Decal* flowDec;
+
 bool Main::OnUserCreate() {
+    p.setPos({300, 300});
+
+    spr.LoadFromFile("../res/textures/wall1.png");
+    dec = new olc::Decal(&spr);
+
+    flow.LoadFromFile("../res/textures/grass2.png");
+    flowDec = new olc::Decal(&flow);
+    flower->texture = flowDec;
+    flower->textureWidth = 30;
+
+    flower2->texture = flowDec;
+    flower2->textureWidth = 30;
+    flower3->texture = flowDec;
+    flower3->textureWidth = 30;
+    flower4->texture = flowDec;
+    flower4->textureWidth = 30;
+
+    b1->texture = dec;
+    b2->texture = dec;
+    b3->texture = dec;
+    b4->texture = dec;
+
+    b1->textureWidth = 100;
+    b2->textureWidth = 100;
+    b3->textureWidth = 100;
+    b4->textureWidth = 100;
+
+    p.add(&b1);
+    p.add(&b2);
+    p.add(&b3);
+    p.add(&b4);
+
+    p.add(&flower);
+    p.add(&flower2);
+    p.add(&flower3);
+    p.add(&flower4);
+
+
     return true;
 }
+
+
 
 bool Main::OnUserUpdate(float fElapsedTime) {
     Clear(olc::BLACK);
 
-    //DrawCircle(p.pos, 5);
-    //DrawLine(p.pos, p.pos+p.dir*10);
-    DrawCircle(res/2, 5);
-    DrawLine(res/2, {res.x/2, res.y/2 - 10});
+    p.renderFP(this, res);
+    p.renderMap(this, res);
 
-    p.renderMap(this, b1, res/2);
+    move(fElapsedTime);
 
+    return true;
+}
 
-
-
-    //Player controls
+void Main::move(float fElapsedTime) {
+//Player controls
     float turnSpeed = 170;
     if(GetKey(olc::LEFT).bHeld) {
         p.turn(-turnSpeed*fElapsedTime);
@@ -74,6 +131,4 @@ bool Main::OnUserUpdate(float fElapsedTime) {
         olc::vf2d n = {p.dir.y, -p.dir.x};
         p.translate(n * -speed * fElapsedTime);
     }
-
-    return true;
 }
