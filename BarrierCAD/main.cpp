@@ -24,13 +24,17 @@ int main() {
 
 }
 
-bm::v2f test1(0.5, 0.5);
-bm::v2f test2(0.25, 0.75);
+bm::v2f test1 = {0.5, 0.5};
+bm::v2f test2(test1);
 
 
 bool Main::OnUserCreate() {
 
     test1.print();
+    test2.print();
+
+    test2 += 0.25;
+    test2.x -= 0.5;
     test2.print();
 
     (test1 + test2).print();
@@ -40,6 +44,13 @@ bool Main::OnUserCreate() {
 
     test1 *= 2;
     test1.print();
+
+    bm::v3f t1(1, 0, 1);
+    bm::v3f t2(0, 1, 0);
+
+    bm::cross(t1, t2).print();
+
+
 
     return true;
 }

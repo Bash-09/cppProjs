@@ -10,7 +10,7 @@ namespace bm {
 template <class T, int dim> class V {
 public:
     //Shorthand and useful values
-    int dims = dim;
+    const int dims = dim;
     T vals[dim] = { };
 
     T &x = vals[0];
@@ -46,7 +46,7 @@ public:
     }
 
     //Operator overloads
-    &T operator [] (int i){
+    T& operator [] (int i){
         if(i >= dims) throw "Accessing out of bounds of Vector!";
         return vals[i];
     }
@@ -142,6 +142,7 @@ public:
         for(int i = 0; i < lim; i++) {
             vals[i] += v[i];
         }
+        return *this;
     }
 
     //Dot and cross products;
@@ -162,7 +163,7 @@ public:
         out.x = y*(T)v.z - z*(T)v.y;
         out.y = z*(T)v.x - x*(T)v.z;
         out.z = x*(T)v.y - y*(T)v.x;
-        return V<T, 3>();
+        return out;
     }
 
     //Random print method to make things easy
@@ -175,6 +176,8 @@ public:
     }
 
 };
+
+//Common vectors
 
 class v2f : public V<float, 2> {
 public:
@@ -303,6 +306,109 @@ public:
         vals[3] = w;
     }
     v4d() {}
+};
+
+template <class T> 
+V<T, 3> cross(V<T, 3> a, V<T, 3> b) {
+    V<T, 3> out;
+    out.x = a.y*b.z - a.z*b.y;
+    out.y = a.z*b.x - a.x*b.z;
+    out.z = a.x*b.y - a.y*b.x;
+    return out;
+}
+
+template <class T, int rowNum, int colNum> class M {
+public:
+
+    const int rows = rowNum;
+    const int cols = colNum;
+
+    T vals[rowNum][colNum] = { };
+
+    M() {
+
+    }
+
+    M(T val) {
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < cols; c++) {
+                vals[r][c] = val;
+            }
+        }
+    }
+
+    //Operator overloads
+    M operator * (M rhs) {
+        if(cols != rhs.rows) {
+            throw "Attempting to multiply incompatible matrices";
+            return *this;
+        }
+
+        M<T, rows, rhs.cols> out;
+
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < rhs.cols; c++) {
+                T sum = 0;
+                for(int i = 0; i < rhs.rows; i++) {
+                    sum += vals[r][i] * rhs.vals[i][c];
+                }
+                out.vals[r][c] = sum;
+            }
+        }
+        return out;
+    }
+
+
+
+    //Utility funcs
+    M identity() {
+
+        if(rows == 1) {
+            for(int c = 0; c < cols-1; c++) {
+                vals[0][c] = 0;
+            }
+            vals[0][cols-1] = 1;
+            return *this;
+        }
+
+        if(rows != cols) {
+            throw "No idenetity for non-square matrix!";
+        }
+
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < cols; c++) {
+                if(r == c) {
+                    vals[r][c] = 1;
+                    continue;
+                }
+
+                vals[r][c] = val;
+            }
+        }
+
+        return *this;
+    }
+
+    M zero() {
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < cols; c++) {
+                vals[r][c] = val;
+            }
+        }
+        return *this;
+    }
+
+    void print() {
+        for(int r = 0; r < rows; r++) {
+            std::cout << "[";
+            for(int c = 0; c < cols - 1; c++) {
+                std::cout << vals[r][c] << ", ";
+            }
+            std::cout << vals[r][cols-1] << "]" << std::endl;
+        }
+    }
+
+
 };
 
 
