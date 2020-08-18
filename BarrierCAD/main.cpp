@@ -49,7 +49,19 @@ bool Main::OnUserCreate() {
     bm::v3f t2(0, 1, 0);
 
     bm::cross(t1, t2).print();
+    std::cout << std::endl;
 
+    bm::m2 mat1;
+    mat1.identity().print();
+    bm::m2 mat2;
+    mat2.identity();
+    mat2.vals[0][0] = 2;
+    mat2.vals[0][1] = 3;
+    mat2.vals[1][0] = 4;
+    mat2.vals[1][1] = 5;
+    mat2.print();
+
+    (mat1 * mat2).print();
 
 
     return true;

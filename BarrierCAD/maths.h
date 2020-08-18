@@ -317,6 +317,13 @@ V<T, 3> cross(V<T, 3> a, V<T, 3> b) {
     return out;
 }
 
+
+
+/*
+ *  Matrices!!!!
+ *
+ *
+ */
 template <class T, int rowNum, int colNum> class M {
 public:
 
@@ -338,29 +345,32 @@ public:
     }
 
     //Operator overloads
-    M operator * (M rhs) {
-        if(cols != rhs.rows) {
+    M operator * (M& rhs) {
+       return mul(rhs);
+    }
+
+
+    //Utility funcs
+    M mul(M& rhs) const {
+         if(cols != rhs.rows) {
             throw "Attempting to multiply incompatible matrices";
             return *this;
         }
-
-        M<T, rows, rhs.cols> out;
-
+        M<T, this->rows, rhs.cols> outM;
+        
         for(int r = 0; r < rows; r++) {
             for(int c = 0; c < rhs.cols; c++) {
                 T sum = 0;
                 for(int i = 0; i < rhs.rows; i++) {
                     sum += vals[r][i] * rhs.vals[i][c];
                 }
-                out.vals[r][c] = sum;
+                outM.vals[r][c] = sum;
             }
         }
-        return out;
+        return outM;
     }
 
 
-
-    //Utility funcs
     M identity() {
 
         if(rows == 1) {
@@ -382,7 +392,7 @@ public:
                     continue;
                 }
 
-                vals[r][c] = val;
+                vals[r][c] = 0;
             }
         }
 
@@ -392,7 +402,7 @@ public:
     M zero() {
         for(int r = 0; r < rows; r++) {
             for(int c = 0; c < cols; c++) {
-                vals[r][c] = val;
+                vals[r][c] = 0;
             }
         }
         return *this;
@@ -411,6 +421,17 @@ public:
 
 };
 
+class m2 : public M<float, 2, 2> {
+
+};
+
+class m3 : public M<float, 3, 3> {
+
+};
+
+class m4 : public M<float, 3, 3> {
+
+};
 
 
 }
