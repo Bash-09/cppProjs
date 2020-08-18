@@ -27,6 +27,8 @@ int main() {
 bm::v2f test1 = {0.5, 0.5};
 bm::v2f test2(test1);
 
+bm::m2 mat1;
+bm::m2 mat2;
 
 bool Main::OnUserCreate() {
 
@@ -51,9 +53,7 @@ bool Main::OnUserCreate() {
     bm::cross(t1, t2).print();
     std::cout << std::endl;
 
-    bm::m2 mat1;
     mat1.identity().print();
-    bm::m2 mat2;
     mat2.identity();
     mat2.vals[0][0] = 2;
     mat2.vals[0][1] = 3;
@@ -61,8 +61,8 @@ bool Main::OnUserCreate() {
     mat2.vals[1][1] = 5;
     mat2.print();
 
-    (mat1 * mat2).print();
-
+   // (mat1 * mat2).print();
+    mat1.mul<mat2>().print();
 
     return true;
 }

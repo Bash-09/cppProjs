@@ -344,33 +344,6 @@ public:
         }
     }
 
-    //Operator overloads
-    M operator * (M& rhs) {
-       return mul(rhs);
-    }
-
-
-    //Utility funcs
-    M mul(M& rhs) const {
-         if(cols != rhs.rows) {
-            throw "Attempting to multiply incompatible matrices";
-            return *this;
-        }
-        M<T, this->rows, rhs.cols> outM;
-        
-        for(int r = 0; r < rows; r++) {
-            for(int c = 0; c < rhs.cols; c++) {
-                T sum = 0;
-                for(int i = 0; i < rhs.rows; i++) {
-                    sum += vals[r][i] * rhs.vals[i][c];
-                }
-                outM.vals[r][c] = sum;
-            }
-        }
-        return outM;
-    }
-
-
     M identity() {
 
         if(rows == 1) {
@@ -419,19 +392,67 @@ public:
     }
 
 
+
+    template <M& rhs>
+    M<T, rhs.rows, rhs.cols> mul() {
+        M<T, this->rows, rhs.cols> outM;
+
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < rhs.cols; c++) {
+                T sum = 0;
+                for(int i = 0; i < rhs.rows; i++) {
+                    sum += vals[r][i] * rhs.vals[i][c];
+                }
+                outM.vals[r][c] = sum;
+            }
+        }
+        return outM;
+    }
+
+
 };
 
 class m2 : public M<float, 2, 2> {
+};
 
+/*
+
+class m2 : public M<float, 2, 2> {
+public:
+    m2 mul(m2& rhs) {
+        m2 out;
+
+        return out;
+    }
+
+    m2 operator * (m2& rhs) {
+        return mul(rhs);
+    }
 };
 
 class m3 : public M<float, 3, 3> {
+public:
+    m3 mul(m3& rhs) {
+        m3 out;
 
+        return out;
+    }
+    m3 operator * (m3& rhs) {
+        return mul(rhs);
+    }
 };
 
-class m4 : public M<float, 3, 3> {
+class m4 : public M<float, 4, 4> {
+public:
+    m4 mul(m4& rhs) {
+        m4 out;
 
+        return out;
+    }
+    m4 operator * (m4& rhs) {
+        return mul(rhs);
+    }
 };
-
+*/
 
 }
