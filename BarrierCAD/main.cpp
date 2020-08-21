@@ -53,7 +53,11 @@ bool Main::OnUserCreate() {
     bm::cross(t1, t2).print();
     std::cout << std::endl;
 
-    mat1.identity().print();
+
+    mat1.identity();
+    mat1.vals[0][1] = 1;
+
+
     mat2.identity();
     mat2.vals[0][0] = 2;
     mat2.vals[0][1] = 3;
@@ -61,8 +65,8 @@ bool Main::OnUserCreate() {
     mat2.vals[1][1] = 5;
     mat2.print();
 
-   // (mat1 * mat2).print();
-    mat1.mul<mat2>().print();
+    (mat1 * mat2).print();
+    //mat1.mul<m().print();
 
     return true;
 }

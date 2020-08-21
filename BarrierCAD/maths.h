@@ -391,11 +391,13 @@ public:
         }
     }
 
+    M<T, rowNum, colNum> mul(M& rhs) {
+        if(rhs.rows != rows || rhs.cols != cols || this->rows != rows || this->cols != cols){
+            throw "Attempting to multiply incompatible matrices!";
+            return *this;
+        }
 
-
-    template <M& rhs>
-    M<T, rhs.rows, rhs.cols> mul() {
-        M<T, this->rows, rhs.cols> outM;
+        M<T, rowNum, colNum> outM;
 
         for(int r = 0; r < rows; r++) {
             for(int c = 0; c < rhs.cols; c++) {
@@ -409,20 +411,22 @@ public:
         return outM;
     }
 
+    M<T, rowNum, colNum>
+
+    M<T, rowNum, colNum> operator * (M& rhs) {
+        return mul(rhs);
+    }
+
 
 };
 
-class m2 : public M<float, 2, 2> {
-};
+typedef M<float, 2, 2> m2;
 
 /*
-
 class m2 : public M<float, 2, 2> {
 public:
     m2 mul(m2& rhs) {
-        m2 out;
-
-        return out;
+        return tmul<2, 2>(rhs);
     }
 
     m2 operator * (m2& rhs) {
@@ -433,9 +437,7 @@ public:
 class m3 : public M<float, 3, 3> {
 public:
     m3 mul(m3& rhs) {
-        m3 out;
-
-        return out;
+        return mul<3, 3>(rhs);
     }
     m3 operator * (m3& rhs) {
         return mul(rhs);
