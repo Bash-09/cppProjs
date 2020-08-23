@@ -14,7 +14,7 @@ public:
 
 olc::vi2d res = {1000, 1000};
 bool fullscreen = false;
-bool vsync = false;
+bool vsync = true;
 
 int main() {
 
@@ -84,7 +84,7 @@ bool Main::OnUserCreate() {
     userLayer = CreateLayer();
 
     SetDrawTarget(userLayer);
-    Clear(olc::VERY_DARK_BLUE);
+    Clear(olc::BLANK);
     SetDrawTarget(imgLayer);
     Clear(olc::BLANK);
     SetDrawTarget(liveLayer);
@@ -112,7 +112,7 @@ bool go = false;
 bool painting = false;
 std::vector<olc::vi2d> points;
 
-int fourierRes = 12;
+int fourierRes = 20;
 void calculate() {
     transform.clear();
 
@@ -145,12 +145,13 @@ bool Main::OnUserUpdate(float fElapsedTime) {
 
     SetDrawTarget(userLayer);
     if(GetMouse(0).bPressed) { //Start drawing
+        EnableLayer(userLayer, true);
         SetDrawTarget(imgLayer);    //Clear old stuff
         Clear(olc::BLANK);
         SetDrawTarget(liveLayer);
         Clear(olc::BLANK);
         SetDrawTarget(userLayer);
-        Clear(olc::VERY_DARK_BLUE);
+        Clear(olc::BLANK);
 
         points.clear(); //Reset current stuff
         t = 0;
@@ -167,6 +168,7 @@ bool Main::OnUserUpdate(float fElapsedTime) {
             DrawLine({(*(points.end()-1))}, {(*(points.end()-2))});
             calculate();
             init = true;
+            EnableLayer(userLayer, false);
             return true;
         }
 
