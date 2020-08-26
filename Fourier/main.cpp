@@ -112,7 +112,7 @@ bool go = false;
 bool painting = false;
 std::vector<olc::vi2d> points;
 
-int fourierRes = 20;
+int fourierRes = 500;
 void calculate() {
     transform.clear();
 
