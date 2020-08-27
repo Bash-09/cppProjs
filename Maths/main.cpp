@@ -2,6 +2,7 @@
 
 #include "pge.h"
 #include "iostream"
+#include "maths.h"
 
 
 class Main : public olc::PixelGameEngine{

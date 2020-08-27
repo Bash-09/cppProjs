@@ -50,8 +50,8 @@ public:
 
     Vec();
     Vec(T rhs);
-    Vec(const Vec &rhs);
-    Vec(const Im &rhs);
+    Vec(Vec &rhs);
+    Vec(Im<T> &rhs);
 
     Vec(T x, T y);
     Vec(T x, T y, T z);
@@ -72,18 +72,18 @@ public:
 
     //Arithmetic
     Vec add(const Vec& rhs);
-    Vec add(const Im& rhs);
+    Vec add(const Im<T>& rhs);
 
     Vec added(const Vec &rhs);
-    Vec added(const Im &rhs);
+    Vec added(const Im<T> &rhs);
 
     Vec mul(const Vec &rhs);
     Vec mul(const T rhs);
-    Vec mul(const Im &rhs);
+    Vec mul(const Im<T> &rhs);
 
     Vec mulled(const Vec &rhs);
     Vec mulled(const T rhs);
-    Vec mulled(const Im &rhs);
+    Vec mulled(const Im<T> &rhs);
 
     Vec div(const Vec &rhs);
 
@@ -94,7 +94,7 @@ public:
     Vec operator + (const Vec &rhs) {return(added(rhs));}
     Vec operator - (const Vec &rhs) {return(added(-rhs));}
     Vec operator * (const Vec &rhs) {return(mulled(rhs));}
-    Vec operator * (const Im &rhs) {return(mulled(rhs));}
+    Vec operator * (const Im<T> &rhs) {return(mulled(rhs));}
     Vec operator * (const T &rhs) {return(mulled(rhs));}
     Vec operator / (const Vec &rhs) {return(divved(rhs));}
     Vec operator / (const T rhs) {return(mulled(1/rhs));}
@@ -103,12 +103,16 @@ public:
     void operator -= (const T rhs) {add(-rhs);}
     void operator -= (const Vec &rhs) {add(-rhs);}
     void operator *= (const Vec &rhs) {mul(rhs);}
-    void operator *= (const Im &rhs) {mul(rhs);}
+    void operator *= (const Im<T> &rhs) {mul(rhs);}
     void operator *= (const T rhs) {mul(rhs);}
     void operator /= (const Vec &rhs) {div(rhs);}
     void operator /= (const T rhs) {mul(1/rhs);}
 
 };
+
+Vec::Vec() {
+    
+}
 
 template<class T> Vec<T, 3> cross(const Vec<T, 3> &a, const Vec<T, 3> &b);
 
@@ -118,10 +122,10 @@ private:
 public:
     const int size = dims;
 
-    T vals[dims][dims]] = {};
+    T vals[dims][dims] = {};
 
     Mat();
-    Mat(Mat<T, rowNum, colNum> &rhs);
+    Mat(const Mat<T, dims> &rhs);
     Mat(T val);
 
     void print();
@@ -143,16 +147,16 @@ public:
 
     Mat mulled(const T rhs);
     Mat mulled(const Mat &rhs);
-    Vec mulled(const Vec &rhs);
+    Vec<T, dims> mulled(const Vec<T, dims> &rhs);
 
     //Operator overloads
-    Vec operator - () {return(mulled(-1));}
-    Vec operator + (const Mat &rhs) {return(added(rhs));}
-    Vec operator - (const Mat &rhs) {return(added(-rhs));}
-    Vec operator * (const Mat &rhs) {return(mulled(rhs));}
-    Vec operator * (const Vec &rhs) {return(mulled(rhs));}
-    Vec operator * (const T &rhs) {return(mulled(rhs));}
-    Vec operator / (const T rhs) {return(mulled(1/rhs));}
+    Mat operator - () {return(mulled(-1));}
+    Mat operator + (const Mat &rhs) {return(added(rhs));}
+    Mat operator - (const Mat &rhs) {return(added(-rhs));}
+    Mat operator * (const Mat &rhs) {return(mulled(rhs));}
+    Vec<T, dims> operator * (const Vec<T, dims> &rhs) {return(mulled(rhs));}
+    Mat operator * (const T &rhs) {return(mulled(rhs));}
+    Mat operator / (const T rhs) {return(mulled(1/rhs));}
     void operator += (const Mat &rhs) {add(rhs);}
     void operator += (const T rhs) {add(rhs);}
     void operator -= (const Mat &rhs) {add(-rhs);}
@@ -163,5 +167,70 @@ public:
 };
 
 template<class T> class Im {
+public:
+    T r = 0;
+    T i = 0;
+
+    //Constructors
+    Im();
+    Im(const Im &rhs);
+    Im(const Vec<T, 2> &rhs);
+    Im(float angle);
+    Im(T r, T i);
+
+    //Useful
+    template<class O>
+    static Im<O> create(float angle);
+
+    Im rotRad(float angle);
+    Im rotDeg(float angle);
+
+    float angleRad();
+    float angleDeg();
+
+    float mag2();
+    float mag();
+
+    float modulus();
+    Im argument();
+
+    //Arithmetic
+    Im add(const Im &rhs); 
+    Im add(const Vec<T, 2> &rhs);
+    Im add(const T rhs);
+
+    Im added(const Im &rhs);
+    Im added(const Vec<T, 2> &rhs);
+    Im added(const T rhs);
+
+    Im mul(const Im &rhs);
+    Vec<T, 2> mul(const Vec<T, 2> &rhs);
+    Im mul(const T rhs);
+
+    Im mulled(const Im &rhs);
+    Vec<T, 2> mulled(const Vec<T, 2> &rhs);
+    Im mulled(const T rhs);
+
+    //Operator overloads
+    Im operator - () {return(Im<T>{-r, -i});}
+    Im operator + (const Im &rhs) {return(added(rhs));}
+    Im operator + (const Vec<T, 2> &rhs) {return(added(rhs));}
+    Im operator + (const T rhs) {return(added(rhs));}
+    Im operator - (const Im &rhs) {return(added(-rhs));}
+    Im operator - (const Vec<T, 2> &rhs) {return(added(-rhs));}
+    Im operator - (const T rhs) {return(added(rhs));}
+    Im operator * (const Im &rhs) {return(mulled(rhs));}
+    Vec<T, 2> operator * (const Vec<T, 2> &rhs) {return(mulled(rhs));}
+    Im operator * (const T rhs) {return(mulled(rhs));}
+    Im operator / (const T rhs) {return(mulled(1/rhs));}
+    void operator += (const Im &rhs) {add(rhs);}
+    void operator += (const Vec<T, 2> &rhs) {add(rhs);}
+    void operator += (const T rhs) {add(rhs);}
+    void operator -= (const Im &rhs) {add(-rhs);}
+    void operator -= (const Vec<T, 2> &rhs) {add(-rhs);}
+    void operator -= (const T rhs) {add(-rhs);}
+    void operator *= (const Im &rhs) {mul(rhs);}
+    void operator *= (const T rhs) {mul(rhs);}
+    void operator /= (const T rhs) {mul(1/rhs);}
 
 };
