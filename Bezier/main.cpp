@@ -36,13 +36,13 @@ V2f cp1 = {200, 200};
 V2f cp2 = {400, 200};
 
 bool Main::OnUserCreate() {
-    fg = CreateLayer();
+    fg = CreateLayer(); //Create drawing layers 
     bg = CreateLayer();
 
-    EnableLayer(bg, true);
+    EnableLayer(bg, true); 
     EnableLayer(fg, true);
 
-    Clear(olc::BLANK);
+    Clear(olc::BLANK); //Clear layers
     SetDrawTarget(bg);
     Clear(olc::BLANK);
     SetDrawTarget(fg);
@@ -51,13 +51,14 @@ bool Main::OnUserCreate() {
     return true;
 }
 
-bool animate = false;
+bool animate = false; //State control variables
 float t = 0;
 bool clicked = false;
 V2f* selected = nullptr;
-float speed = 3;
 
+float speed = 3; //Control variables
 int lineRes = 50;
+
 bool Main::OnUserUpdate(float fElapsedTime) {
     SetDrawTarget(bg);
 
@@ -66,7 +67,7 @@ bool Main::OnUserUpdate(float fElapsedTime) {
     if(GetMouse(0).bPressed) {
         V2f pos = {(float)GetMouseX(), (float)GetMouseY()};
         
-        V2f dis = pos - p1;
+        V2f dis = pos - p1; //Detecting grabbing of points
         if(dis.mag2() < 25) {
             clicked = true;
             selected = &p1;
@@ -91,7 +92,7 @@ bool Main::OnUserUpdate(float fElapsedTime) {
             goto NEXT;
         }
 
-        dis = pos;
+        dis = pos; //Detecting animate button press
         dis.x -= 30;
         dis.y -= 30;
         if(dis.mag() <= 20) {
@@ -116,9 +117,9 @@ bool Main::OnUserUpdate(float fElapsedTime) {
 
     std::ostringstream oss;
 
-    DrawLine(p1.x, p1.y, cp1.x, cp1.y, olc::BLUE);
-    DrawLine(cp2.x, cp2.y, p2.x, p2.y, olc::BLUE);
-    DrawLine(cp2.x, cp2.y, cp1.x, cp1.y, olc::BLUE);
+    DrawLine(p1.x, p1.y, cp1.x, cp1.y, olc::BLUE); //This is all just 
+    DrawLine(cp2.x, cp2.y, p2.x, p2.y, olc::BLUE); //Drawing a bunch
+    DrawLine(cp2.x, cp2.y, cp1.x, cp1.y, olc::BLUE);//of crap
 
     FillCircle(p1.x, p1.y, 5);
     oss.str("");
@@ -160,7 +161,7 @@ bool Main::OnUserUpdate(float fElapsedTime) {
     DrawString(10, 80, oss.str());
 
 
-    V2f a = cp1 - p1;
+    V2f a = cp1 - p1; //Vectors between main points
     V2f b = cp2 - cp1;
     V2f c = p2 - cp2;
 
@@ -169,27 +170,27 @@ bool Main::OnUserUpdate(float fElapsedTime) {
     if(animate) {
         t += fElapsedTime / speed;
     }
-    for(int i = 1; i < lineRes+1; i++) {
+    for(int i = 1; i < lineRes+1; i++) { //Loop to draw curved line
         float dist = (float)i/lineRes;
         if(animate) dist *= t;
 
-        V2f lp1 = p1 + (a * dist);
+        V2f lp1 = p1 + (a * dist); //Points on lines from above
         V2f lp2 = cp1 + (b * dist);
         V2f lp3 = cp2 + (c * dist);
 
-        V2f d = lp2 - lp1;
+        V2f d = lp2 - lp1; //Lines between those points
         V2f e = lp3 - lp2;
 
-        V2f lp4 = lp1 + (d * dist);
+        V2f lp4 = lp1 + (d * dist); //Points on those lines
         V2f lp5 = lp2 + (e * dist);
 
-        V2f f = lp5 - lp4;
-        V2f lp6 = lp4 + (f * dist);
+        V2f f = lp5 - lp4; //Lines between those points
+        V2f lp6 = lp4 + (f * dist); //Point on that line (the next part on the bezier curve)
 
         DrawLine(last.x, last.y, lp6.x, lp6.y);
         last = lp6;
 
-        if(animate) {
+        if(animate) { //Draw cool animated stuff
             SetDrawTarget(fg);
             Clear(olc::BLANK);
 
@@ -204,7 +205,6 @@ bool Main::OnUserUpdate(float fElapsedTime) {
             FillCircle(lp5.x, lp5.y, 3, olc::GREEN);
             FillCircle(lp6.x, lp6.y, 3, olc::RED);
 
-            //if(dist > t) break;
             if(t >= 1) {
                 animate = false;
                 Clear(olc::BLANK);
