@@ -1,59 +1,63 @@
 #include "renderer.h"
 
-
-void render(olc::PixelGameEngine &pge, V2i res, Camera &cam) {
+//Loops through each pixel on the screen and gets the colour to draw
+void render(olc::PixelGameEngine &pge, V2i res, Camera &cam, std::vector<Collideable*> scene) {
 
     for(int i = 0; i < res.x; i++) {
         for(int j = 0; j < res.y; j++) {
             float x = (float)i / (float)res.x;
             float y = 1 - (float)j / (float)res.y;
 
-            pge.FillRect(x, y, 1, 1, getPixel({(float)x, (float)y}, cam));
+            olc::Pixel pix = getPixel({x, y}, cam, scene);
+            pge.FillRect(i, j, 1, 1, pix);
 
         }
     }
 
 }
 
-Collision castRay(Ray &ray) {
-    Sphere sp1;
-    sp1.pos = {0, 0, 1};
-    sp1.rad = 0.5;
+//Casts ray against everything in the scene
+Collision castRay(Ray &ray, std::vector<Collideable*> scene) {
 
     Collision col = {ray, 1000, ray.dir, nullptr};
-
-    col = sp1.trace(col, ray);
+    
+    for(auto i = scene.begin(); i != scene.end(); i++) {
+        col = (**i).trace(col, ray);
+    }
 
     return col;
 }
 
-olc::Pixel getPixel(V2f coords, Camera &cam) {
-
-    Ray ray = cam.getOutRay(coords);
-    Collision col = castRay(ray);
-
-    ray.dir.print();
-    return olc::PixelF(ray.dir.x,ray.dir.y,ray.dir.z);
-
-    /*
-
-    if(col.target == nullptr) return olc::BLACK;
-    else return olc::BLUE;
-    */
-
-}
-
+//Gets the outgoing ray for a given x/y coordinate from the camera
 Ray Camera::getOutRay(V2f coords) {
 
-    V3f p = pos + x*coords.x - x/2 + y*coords.y - y/2;
-    V3f d = z;
+    //Orthogonal view
+    //V3f p = pos + x*coords.x - x/2 + y*coords.y - y/2;
+    //V3f d = z;
 
-    return {p, d};
+    //Perspective view
+    float l = 0.5 / tan(fov*DTR/2);
+    V3f d = x*coords.x - x/2 + y*coords.y - y/2 + z*l;
+
+    return {pos, d};
 }
 
+//Updates the stuff in the camera to calculate outgoing rays properly
 void Camera::updateDir(V3f newDir) {
     V3f seed = {0, 1, 0};
-    z = newDir;
+    z = newDir.normalized();
     x = z.cross(seed);
     y = x.cross(z);
+}
+
+//Gets the ray for a certain pixel, casts it and gets the colour of the material it hit
+olc::Pixel getPixel(V2f coords, Camera &cam, std::vector<Collideable*> scene) {
+
+    Ray ray = cam.getOutRay(coords);
+    Collision col = castRay(ray, scene);
+
+    if(col.target == nullptr) return olc::BLACK;
+
+    V3f colour = (col.target->mat->col);
+    return olc::PixelF(colour.x, colour.y, colour.z);
 }

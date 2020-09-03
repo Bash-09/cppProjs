@@ -61,7 +61,7 @@ public:
     Vec(const Vec &rhs) {
         int lim = dims;
         for(int i = 0; i < lim; i++) {
-            if(lim >= rhs.size) {
+            if(i >= rhs.size) {
                 vals[i] = 0;
             } else {
                 vals[i] = rhs.vals[i];
@@ -217,7 +217,7 @@ public:
         }
         return out;
     }
-    Vec mulled(const T rhs) const {
+    Vec mulled(T rhs) const {
         Vec<T, dims> out;
         for(int i = 0; i < dims; i++) {
             out.vals[i] = vals[i] * rhs;
@@ -235,16 +235,9 @@ public:
         return out;
     }
 
-    Vec div(const Vec &rhs) const {
+    Vec div(const Vec &rhs) {
         for(int i = 0; i < dims; i++) {
-            vals[i] /= rhs[i];
-        }
-        return *this;
-    }
-
-    Vec div(T rhs) {
-        for(int i = 0; i < dims; i++) {
-            vals[i] /= rhs;
+            vals[i] /= rhs.vals[i];
         }
         return *this;
     }

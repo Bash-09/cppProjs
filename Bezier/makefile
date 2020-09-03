@@ -1,15 +1,17 @@
 CXX = g++-10
 CFLAGS = -lX11 -lGL -lpthread -lpng -lstdc++fs -std=c++17 -g -Wall
-
-OD = o
+ODIR = o
 OUT = a
 
-$(OUT): $(OD)/main.o
-	$(CXX) -o $(OUT) $(OD)/main.o $(CFLAGS)
+$(OUT): $(ODIR)/main.o $(ODIR)/maths.o 
+	$(CXX) -o $(OUT) $(ODIR)/main.o$(ODIR)/maths.o$(CFLAGS)
 
-$(OD)/main.o: main.cpp maths.h
+$(ODIR)/main.o: main.cpp 
 	$(CXX) -o $(OD)/main.o main.cpp $(CFLAGS) -c
 
+$(ODIR)/maths.o: maths.cpp 
+	$(CXX) -o $(OD)/maths.o maths.cpp $(CFLAGS) -c
 
 clean:
-	rm $(OUT) $(OD)/*.o
+	rm $(OUT) $(ODIR)/*.o
+

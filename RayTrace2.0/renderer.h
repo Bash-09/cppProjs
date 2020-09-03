@@ -6,10 +6,10 @@
 
 class Camera {
 public:
-    V3f getPos() {return pos;}
+    V3f pos = {0};
+
     V3f getDir() {return z;}
 
-    void setPos(V3f newPos) {pos = newPos;}
     void setDir(V3f newDir) {updateDir(newDir);}
 
     Ray getOutRay(V2f coords);
@@ -17,8 +17,6 @@ public:
     float fov = 60;
 
 private:
-    V3f pos = {0};
-
     void updateDir(V3f newDir);
 
     V3f x = {1, 0, 0};
@@ -27,6 +25,6 @@ private:
 
 };
 
-void render(olc::PixelGameEngine &pge, V2i res, Camera &cam);
-Collision castRay(Ray &ray);
-olc::Pixel getPixel(V2f coords, Camera &cam);
+void render(olc::PixelGameEngine &pge, V2i res, Camera &cam, std::vector<Collideable*> scene);
+Collision castRay(Ray &ray, std::vector<Collideable*> scene);
+olc::Pixel getPixel(V2f coords, Camera &cam, std::vector<Collideable*> scene);

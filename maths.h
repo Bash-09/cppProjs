@@ -1,24 +1,43 @@
 #pragma once
 
+#include <iostream>
+#include <cmath>
+
 const float PI = 2*acos(0);
 const float RTD = 180/PI;
 const float DTR = PI/180;
 
-namespace bm {
+template<class T, int dims> class Vec;
+template<class T, int dims> class Mat;
+template<class T> class Im;
 
-/*
- *  Vectors
- *
-*/
+typedef Im<float> Imf;
+typedef Im<float> Imd;
+
+typedef Vec<float, 2> V2f;
+typedef Vec<float, 3> V3f;
+typedef Vec<float, 4> V4f;
+typedef Vec<int, 2> V2i;
+typedef Vec<int, 3> V3i;
+typedef Vec<int, 4> V4i;
+typedef Vec<double, 2> V2d;
+typedef Vec<double, 3> V3d;
+typedef Vec<double, 4> V4d;
+
+typedef Mat<float, 2> M2f; 
+typedef Mat<float, 3> M3f; 
+typedef Mat<float, 4> M4f; 
+typedef Mat<double, 2> M2d; 
+typedef Mat<double, 3> M3d; 
+typedef Mat<double, 4> M4d; 
 
 
-template<class T> class I;
-
-template <class T, int dim> class V {
+//Vectors
+template<class T, int dims> class Vec {
 public:
-    //Shorthand and useful values
-    const int dims = dim;
-    T vals[dim] = { };
+    const int size = dims;
+
+    T vals[dims] = { };
 
     T &x = vals[0];
     T &y = vals[1];
@@ -28,656 +47,353 @@ public:
     T &r = vals[0];
     T &g = vals[1];
     T &b = vals[2];
-    T &a = vals[3];
+    T &a = vals[3];    
 
     //Constructors
-    V(T val) {
+    Vec() {
+
+    }
+    Vec(T rhs) {
         for(int i = 0; i < dims; i++) {
-            vals[i] = val;
+            vals[i] = rhs;
         }
     }
-    V() {}
-    V(V &in) { //Copy data into new Vector
-        for(int i = 0; i < dim; i++) {
-            if(i > in.dims) {
+    Vec(const Vec &rhs) {
+        int lim = dims;
+        for(int i = 0; i < lim; i++) {
+            if(i >= rhs.size) {
                 vals[i] = 0;
             } else {
-                vals[i] = in.vals[i];
+                vals[i] = rhs.vals[i];
             }
         }
     }
-    V(I<T> &in) {
-        x = in.r;
-        y = in.i;
+    Vec(const Im<T> &rhs) {
+        x = rhs.r;
+        y = rhs.i;
     }
-    V(T x, T y) {
-        if(dim == 0) return;
+
+    Vec(T x, T y, T z = 0, T w = 0) {
+        if(dims < 1) return;
         this->x = x;
-        if(dim == 1) return;
+        if(dims == 1) return;
         this->y = y;
-    }
-    V(T x, T y, T z) {
-        if(dim == 0) return;
-        this->x = x;
-        if(dim == 1) return;
-        this->y = y;
-        if(dim == 2) return;
+        if(dims == 2) return;
         this->z = z;
-    }
-    V(T x, T y, T z, T w) {
-        if(dim == 0) return;
-        this->x = x;
-        if(dim == 1) return;
-        this->y = y;
-        if(dim == 2) return;
-        this->z = z;
-        if(dim == 3) return;
+        if(dims == 3) return;
         this->w = w;
-    }
 
-    //Operator overloads
-    T& operator [] (int i){
-        if(i >= dims) throw "Accessing out of bounds of Vector!";
-        return vals[i];
-    }
-    V operator + (V& rhs) {
-        V<T, dim> out;
-        int lim = dims;
-        if(rhs.dims < dims) lim = rhs.dims;
-        for(int i = 0; i < lim; i++) {
-            out[i] = vals[i] + rhs[i];
-        }
-        return out;
-    }
-    void operator += (V& rhs) {
-        int lim = dims;
-        if(rhs.dims < dims) lim = rhs.dims;
-        for(int i = 0; i < lim; i++) {
-            vals[i] += rhs[i];
-        }
-    }
-    V operator - (V<T, dim> rhs) {
-        V<T, dim> out;
-        int lim = dims;
-        if(rhs.dims < dims) lim = rhs.dims;
-        for(int i = 0; i < lim; i++) {
-            out[i] = vals[i] - rhs[i];
-        }
-        return out;
-    }
-    void operator -= (V rhs) {
-        int lim = dims;
-        if(rhs.dims < dims) lim = rhs.dims;
-        for(int i = 0; i < lim; i++) {
-            vals[i] -= rhs[i];
-        }
-    }
-    V operator * (V& rhs) {
-        V<T, dim> out;
-        int lim = dims;
-        if(rhs.dims < lim) lim  = rhs.dims;
+    };
 
-        for(int i = 0; i < lim; i++) {
-            out[i] = vals[i] * rhs.vals[i];
-        }
-        return out;
-    }
-    V operator / (V& rhs) {
-        V<T, dim> out;
-        int lim = dims;
-        if(rhs.dims < lim) lim  = rhs.dims;
+    ~Vec() {}
 
-        for(int i = 0; i < lim; i++) {
-            out[i] = vals[i] / rhs.vals[i];
-        }
-        return out;
-    }
-    V operator * (T& rhs) {
-        V<T, dim> out;
-        for(int i = 0; i < dim; i++) {
-            out[i] = vals[i] * rhs;
-        }
-        return out;
-    }
-    void operator *= (T& rhs) {
-        for(int i = 0; i < dim; i++) {
-            vals[i] *= rhs;
-        }
-    }
-    void operator /= (T& rhs) {
-        for(int i = 0; i < dim; i++) {
-            vals[i] /= rhs;
-        }
-    }
-    V<T, 2> operator * (I<T>& rhs) {
-        return {
-            x * rhs.r - y * rhs.i,
-            x * rhs.i + y * rhs.r
-        };
-    }
-    void operator *= (I<T>& rhs) {
-        T tx = x;
-        T ty = y;
-        x = tx * rhs.r - ty * rhs.i;
-        y = tx * rhs.i + ty * rhs.r;
-    }
-    //Adding complex numbers to vector
-    void operator += (I<T>& rhs) {
-        x += rhs.r;
-        y += rhs.i;
-    }
-    V<T, 2> operator - (I<T>& rhs) {
-        V<T, 2> out;
-        out.x = x - rhs.r;
-        out.y = y - rhs.i;
-        return out;
-    }
-    V<T, 2> operator + (I<T>& rhs) {
-        V<T, 2> out;
-        out.x = x + rhs.r;
-        out.y = y + rhs.i;
-        return out;
-    }
-    void operator -= (I<T>& rhs) {
-        x -= rhs.r;
-        y -= rhs.i;
-    }
-
-    //Length, Magnitude, normalization
-    T mag2() {
-        T total = 0;
-        for(int i = 0; i < dim; i++) {
-            total += vals[i]*vals[i];
-        }
-        return total;
-    }
-    T mag() {
-        return sqrt(mag2());
-    }
-    V normalize() {
-        T length = mag();
-        if(length == 0) return *this;
-        for(int i = 0; i < dim; i++) {
-            vals[i] /= length;
-        }
-        return *this;
-    }
-    //Vector multiplcation
-    V mul(V v) {
-        int lim = dims;
-        if(v.dims < lim) lim  = v.dims;
-
-        for(int i = 0; i < lim; i++) {
-            vals[i] *= v.vals[i];
-        }
-        return *this;
-    }
-    //Dot and cross products;
-    float dot(V v) {
-        if(v.dims != dims) {
-            throw "Vector cross between incompatible dimension!";
-            return 0;
-        }
-        float out = 0;
-        for(int i = 0; i < dims; i++) {
-            out += (float)vals[i] * (float)v.vals[i];
-        }
-        return out;
-    }
-    V<T, 3> cross(V v) {
-        V<T, 3> out;
-        out.x = y*(T)v.z - z*(T)v.y;
-        out.y = z*(T)v.x - x*(T)v.z;
-        out.z = x*(T)v.y - y*(T)v.x;
-        return out;
-    }
-    //Print method to make debugging easy
     void print() {
         std::cout << "[";
-        for(int i = 0; i < dims-1; i++) {
+        for(int i = 0; i < dims - 1; i++) {
             std::cout << vals[i] << ", ";
         }
         std::cout << vals[dims-1] << "]" << std::endl;
     }
 
-};
-
-template <class T> 
-V<T, 3> cross(V<T, 3> a, V<T, 3> b) {
-    V<T, 3> out;
-    out.x = a.y*b.z - a.z*b.y;
-    out.y = a.z*b.x - a.x*b.z;
-    out.z = a.x*b.y - a.y*b.x;
-    return out;
-}
-
-//Common Vectors
-typedef V<float, 2> v2f;
-typedef V<float, 3> v3f;
-typedef V<float, 4> v4f;
-typedef V<int, 2> v2i;
-typedef V<int, 3> v3i;
-typedef V<int, 4> v4i;
-typedef V<double, 2> v2d;
-typedef V<double, 3> v3d;
-typedef V<double, 4> v4d;
-
-/*########################################################################
- *  Matrices!!!!
- */
-template <class T, int rowNum, int colNum> class M {
-public:
-    const int rows = rowNum;
-    const int cols = colNum;
-
-    T vals[rowNum][colNum] = { };
-
-    M() {
-
-    }
-    M(M<T, rowNum, colNum>& in) {
-        set(in);
-    }
-    M(T val) {
-        for(int r = 0; r < rows; r++) {
-            for(int c = 0; c < cols; c++) {
-                vals[r][c] = val;
-            }
+    //Vector functions
+    T mag2() {
+        T total = 0;
+        for(int i = 0; i < dims; i++) {
+            total += vals[i]*vals[i];
         }
+        return total;
     }
-    //Util Functions!!!
-    M identity() {
+    T mag() {
+        T total = 0;
+        for(int i = 0; i < dims; i++) {
+            total += vals[i]*vals[i];
+        }
+        return std::sqrt(total);
+    }
 
-        if(rows == 1) {
-            for(int c = 0; c < cols-1; c++) {
-                vals[0][c] = 0;
-            }
-            vals[0][cols-1] = 1;
+    Vec normalize() {
+        T s = mag();
+        div(s);
+        return *this;
+    }
+    Vec normalized() {
+        Vec<T, dims> out;
+        T s = mag();
+        for(int i = 0; i < dims; i++) {
+            out[i] = vals[i]/s;
+        }
+        return out;
+    }
+    float dot(const Vec &rhs) {
+        if(rhs.size != dims) {
+            throw "Cannot dot non-equal-sized vectors!";
+            return 0;
+        }
+        T total = 0;
+        for(int i = 0; i < dims; i++) {
+            total += vals[i] * rhs.vals[i];
+        }
+        return total;
+    }
+
+
+    Vec cross(const Vec &rhs) {
+        if(dims != 3 || rhs.size != 3) {
+            throw "Cannot cross non 3D vectors!";
             return *this;
         }
-
-        if(rows != cols) {
-            throw "No idenetity for non-square matrix!";
-        }
-
-        for(int r = 0; r < rows; r++) {
-            for(int c = 0; c < cols; c++) {
-                if(r == c) {
-                    vals[r][c] = 1;
-                    continue;
-                }
-
-                vals[r][c] = 0;
-            }
-        }
-
-        return *this;
+        Vec<T, 3> out;
+        out.x = y*(T)rhs.z - z*(T)rhs.y;
+        out.y = z*(T)rhs.x - x*(T)rhs.z;
+        out.z = x*(T)rhs.y - y*(T)rhs.x;
+        return out;
     }
-    M zero() {
-        for(int r = 0; r < rows; r++) {
-            for(int c = 0; c < cols; c++) {
-                vals[r][c] = 0;
-            }
+
+    //Arithmetic
+    Vec add(const Vec& rhs) const {
+        int lim = dims;
+        if(rhs.size < lim) lim = rhs.size;
+        for(int i = 0; i < lim; i++) {
+            vals[i] += rhs.vals[i];
         }
         return *this;
     }
-    void print() {
-        for(int r = 0; r < rows; r++) {
-            std::cout << "[";
-            for(int c = 0; c < cols - 1; c++) {
-                std::cout << vals[r][c] << ", ";
-            }
-            std::cout << vals[r][cols-1] << "]" << std::endl;
-        }
-    }
-    void set(M<T, rowNum, colNum>& rhs) {
-        for(int i = 0; i < rowNum; i++) {
-            for(int j = 0; j < colNum; j++) {
-                vals[i][j] = rhs.vals[i][j];
-            }
-        }
-    }
-    //Multiplying!!!
-    M<T, rowNum, colNum> mul(M<T, rowNum, colNum>& rhs) {
-        M<T, rowNum, colNum> outM;
-
-        for(int r = 0; r < rows; r++) {
-            for(int c = 0; c < rhs.cols; c++) {
-                T sum = 0;
-                for(int i = 0; i < rhs.rows; i++) {
-                    sum += vals[r][i] * rhs.vals[i][c];
-                }
-                outM.vals[r][c] = sum;
-            }
-        }
-        return outM;
-    }
-    V<T, rowNum> mul(V<T, colNum>& rhs) {
-        V<T, rowNum> out;
-
-        for(int i = 0; i < rowNum; i++) {
-            T total = 0;
-            for(int j = 0; j < colNum; j++) {
-                total += vals[i][j] * rhs[j];
-            }
-            out[i] = total;
-        }
-        return out;
-    }
-    M<T, rowNum, colNum> mul(T rhs) {
-        for(int i = 0; i < rowNum; i++) {
-            for(int j = 0; j < colNum; j++) {
-                vals[i][j] *= rhs;
-            }
-        }
-    }
-    //Operator Overloads!!!
-    M<T, rowNum, colNum> operator * (M& rhs) {
-        return mul(rhs);
-    }
-    V<T, rowNum> operator * (V<T, colNum>& rhs) {
-        return mul(rhs);
-    }
-    M operator * (T rhs) {
-        M<T, rowNum, colNum> out;
-        for(int i = 0; i < rowNum; i++) {
-           for(int j = 0; j < colNum; j++) {
-                out.vals[i][j] = vals[i][j] * rhs.vals[i][j];
-            } 
-        }
-        return out;
-    }
-    void operator *= (T rhs) {
-        mul(rhs);
-    }
-    void operator *= (M<T, rowNum, colNum>& rhs) {
-        M<T, rowNum, colNum> outM;
-
-        for(int r = 0; r < rows; r++) {
-            for(int c = 0; c < rhs.cols; c++) {
-                T sum = 0;
-                for(int i = 0; i < rhs.rows; i++) {
-                    sum += vals[r][i] * rhs.vals[i][c];
-                }
-                outM.vals[r][c] = sum;
-            }
-        }
-        set(outM);
-    }
-    M operator / (T rhs) {
-        M<T, rowNum, colNum> out;
-        for(int i = 0; i < rowNum; i++) {
-           for(int j = 0; j < colNum; j++) {
-                out.vals[i][j] = vals[i][j] / rhs.vals[i][j];
-            } 
-        }
-        return out;
-    }
-    void operator += (T rhs) {
-        for(int i = 0; i < rowNum; i++) {
-            for(int j = 0; j < colNum; j++) {
-                vals[i][j] += rhs;
-            }
-        }
-    }
-    void operator -= (T rhs) {
-        for(int i = 0; i < rowNum; i++) {
-            for(int j = 0; j < colNum; j++) {
-                vals[i][j] -= rhs;
-            }
-        }
-    }
-    void operator /= (T rhs) {
-        for(int i = 0; i < rowNum; i++) {
-            for(int j = 0; j < colNum; j++) {
-                vals[i][j] /= rhs;
-            }
-        }
-    }
-    M operator + (M<T, rowNum, colNum>& rhs) {
-        M<T, rowNum, colNum> out;
-        for(int i = 0; i < rowNum; i++) {
-           for(int j = 0; j < colNum; j++) {
-                out.vals[i][j] = vals[i][j] + rhs.vals[i][j];
-            } 
-        }
-        return out;
-    }
-    M operator - (M<T, rowNum, colNum>& rhs) {
-        M<T, rowNum, colNum> out;
-        for(int i = 0; i < rowNum; i++) {
-           for(int j = 0; j < colNum; j++) {
-                out.vals[i][j] = vals[i][j] - rhs.vals[i][j];
-            } 
-        }
-        return out;
-    }
-    //Inverting!!!
-    M invert() {
-        if(rowNum == 2 && colNum == 2) {
-            return invert2();
-        } else if(rowNum == 3 && colNum == 3) {
-            return invert3();
-        } else if (rowNum == 4 && colNum == 4) {
-            return invert4();
-        } else {
-            throw "Cannot invert matrix!";
-        }
-    }
-
-private:
-    M invert2() {
-        float a = vals[0][0];
-        float b = vals[0][1];
-        float c = vals[1][0];
-        float d = vals[1][1];
-
-        float invDet = 1/(a*d - b*c);
-
-        vals[0][0] = invDet * d;
-        vals[0][1] = invDet * -b;
-        vals[1][0] = invDet * -c;
-        vals[1][1] = invDet * a;
-
+    Vec add(const Im<T>& rhs) const {
+        x += rhs.r;
+        if(dims < 2) return *this;
+        y += rhs.i;
         return *this;
     }
-    M invert3() {
-        T detA = vals[1][1]*vals[2][2] - vals[1][2]*vals[2][1];
-        T detB = vals[1][0]*vals[2][2] - vals[1][2]*vals[2][0];
-        T detC = vals[1][0]*vals[2][1] - vals[1][1]*vals[2][0];
-        T detD = vals[0][1]*vals[2][2] - vals[0][2]*vals[2][1];
-        T detE = vals[0][0]*vals[2][2] - vals[2][0]*vals[0][2];
-        T detF = vals[0][0]*vals[2][1] - vals[0][1]*vals[2][0];
-        T detG = vals[0][1]*vals[1][2] - vals[0][2]*vals[1][1];
-        T detH = vals[0][0]*vals[1][2] - vals[0][2]*vals[1][0];
-        T detI = vals[0][0]*vals[1][1] - vals[1][0]*vals[0][1];
 
-        T det = vals[0][0]*vals[1][1]*vals[2][2] + vals[0][1]*vals[1][2]*vals[2][0] + vals[0][2]*vals[1][0]*vals[2][1] 
-        -(vals[0][1]*vals[1][0]*vals[2][2] + vals[0][0]*vals[1][2]*vals[2][1] + vals[0][2]*vals[1][1]*vals[2][0]);
+    Vec added(const Vec &rhs) const {
+        Vec<T, dims> out;
+        int lim = dims;
+        if(rhs.size < lim) lim = rhs.size;
+        for(int i = 0; i < lim; i++) {
+            out.vals[i] = vals[i] + rhs.vals[i];
+        }
+        return out;
+    }
+    Vec added(const Im<T> &rhs) const {
+        Vec<T, dims> out;
+        out.x = x + rhs.x;
+        if(dims < 2) return out;
+        out.y = y + rhs.y;
+        return out;
+    }
 
-        detB *= -1;
-        detD *= -1;
-        detF *= -1;
-        detH *= -1;
-
-        det = 1/det;
-
-        vals[0][0] = det * detA;
-        vals[0][1] = det * detD;
-        vals[0][2] = det * detG;
-        vals[1][0] = det * detB;
-        vals[1][1] = det * detE;
-        vals[1][2] = det * detH;
-        vals[2][0] = det * detC;
-        vals[2][1] = det * detF;
-        vals[2][2] = det * detI;
-
+    Vec mul(const Vec &rhs) const {
+        int lim = dims;
+        if(rhs.size < lim) lim = rhs.size;
+        for(int i = 0; i < lim; i++) {
+            vals[i] *= rhs.vals[i];
+        }
         return *this;
     }
-    M invert4() {
+    Vec mul(const T rhs) {
+        for(int i = 0; i < dims; i++) {
+            vals[i] *= rhs;
+        }
         return *this;
     }
+    Vec mul(const Im<T> &rhs) const {
+        if(dims != 2) {
+            throw "Cannot multiply non-2D Vector with complex number!";
+            return *this;
+        }
+        T tx = x;
+        T ty = y;
+        x = tx * rhs.r - ty * rhs.i;
+        y = tx * rhs.i + ty * rhs.r;
+        return *this;
+    }
+
+    Vec mulled(const Vec &rhs) const {
+        Vec<T, dims> out;
+        int lim = dims;
+        if(rhs.size < lim) lim = rhs.size;
+        for(int i = 0; i < lim; i++) {
+            out.vals[i] = vals[i] * rhs.vals[i];
+        }
+        return out;
+    }
+    Vec mulled(T rhs) const {
+        Vec<T, dims> out;
+        for(int i = 0; i < dims; i++) {
+            out.vals[i] = vals[i] * rhs;
+        }
+        return out;
+    }
+    Vec mulled(const Im<T> &rhs) const {
+        if(dims != 2) {
+            throw "Cannot multiply non-2D Vector with complex number!";
+            return *this;
+        }
+        Vec<T, 2> out;
+        out.x = x * rhs.r - y * rhs.i;
+        out.y = x * rhs.i + y * rhs.r;
+        return out;
+    }
+
+    Vec div(const Vec &rhs) {
+        for(int i = 0; i < dims; i++) {
+            vals[i] /= rhs.vals[i];
+        }
+        return *this;
+    }
+
+    Vec divved(const Vec &rhs) const {
+        Vec<T, dims> out;
+        for(int i = 0; i < dims; i++) {
+            out.vals[i] = vals[i] / rhs;
+        }
+        return out;
+    }
+
+    //Operators
+    void operator = (const Vec& rhs) {
+        for(int i = 0; i < dims; i++) {
+            vals[i] = rhs.vals[i];
+        }
+    }
+    T& operator [] (int index) {return(vals[index]);}
+    Vec operator - () const {return(mulled(-1));}
+    Vec operator + (const Vec &rhs) const {return(added(rhs));}
+    Vec operator - (const Vec &rhs) const {return(added(-rhs));}
+    Vec operator * (const Vec &rhs) const {return(mulled(rhs));}
+    Vec operator * (const Im<T> &rhs) const {return(mulled(rhs));}
+    Vec operator * (const T &rhs) const {return(mulled(rhs));}
+    Vec operator / (const Vec &rhs) const {return(divved(rhs));}
+    Vec operator / (const T rhs) const {return(mulled(1/rhs));}
+    void operator += (const Vec &rhs) const {add(rhs);}
+    void operator += (const T rhs) const {add(rhs);}
+    void operator -= (const T rhs) const {add(-rhs);}
+    void operator -= (const Vec &rhs) const {add(-rhs);}
+    void operator *= (const Vec &rhs) const {mul(rhs);}
+    void operator *= (const Im<T> &rhs) const {mul(rhs);}
+    void operator *= (const T rhs) const {mul(rhs);}
+    void operator /= (const Vec &rhs) const {div(rhs);}
+    void operator /= (const T rhs) const {mul(1/rhs);}
+
 };
 
-typedef M<float, 2, 2> m2;
-typedef M<float, 3, 3> m3;
-typedef M<float, 4, 4> m4;
+template<class T> Vec<T, 3> cross(const Vec<T, 3> &a, const Vec<T, 3> &b);
 
+template<class T, int dims> class Mat {
+private:
 
+public:
+    const int size = dims;
 
-/*########################################################################
- *  Complex Numbers!!!!!
- *
- *
- */
-template<class T> 
-class I {
+    T vals[dims][dims] = {};
+
+    Mat();
+    Mat(const Mat<T, dims> &rhs);
+    Mat(T val);
+
+    void print();
+
+    Mat identity();
+    Mat zero();
+
+    Mat invert();
+
+    //Arithmetic
+    Mat add(const T rhs);
+    Mat add(const Mat &rhs);
+
+    Mat added(const T rhs);
+    Mat added(const Mat &rhs);
+
+    Mat mul(const T rhs);
+    Mat mul(const Mat &rhs);
+
+    Mat mulled(const T rhs);
+    Mat mulled(const Mat &rhs);
+    Vec<T, dims> mulled(const Vec<T, dims> &rhs);
+
+    //Operator overloads
+    Mat operator - () {return(mulled(-1));}
+    Mat operator + (const Mat &rhs) {return(added(rhs));}
+    Mat operator - (const Mat &rhs) {return(added(-rhs));}
+    Mat operator * (const Mat &rhs) {return(mulled(rhs));}
+    Vec<T, dims> operator * (const Vec<T, dims> &rhs) {return(mulled(rhs));}
+    Mat operator * (const T &rhs) {return(mulled(rhs));}
+    Mat operator / (const T rhs) {return(mulled(1/rhs));}
+    void operator += (const Mat &rhs) {add(rhs);}
+    void operator += (const T rhs) {add(rhs);}
+    void operator -= (const Mat &rhs) {add(-rhs);}
+    void operator *= (const Mat &rhs) {mul(rhs);}
+    void operator *= (const T rhs) {mul(rhs);}
+    void operator /= (const T rhs) {mul(1/rhs);}
+
+};
+
+template<class T> class Im {
 public:
     T r = 0;
     T i = 0;
 
-    I(I& in) {
-        r = in.r;
-        i = in.i;
-    }
+    //Constructors
+    Im();
+    Im(const Im &rhs);
+    Im(const Vec<T, 2> &rhs);
+    Im(float angle);
+    Im(T r, T i);
 
-    I(V<T, 2>& in) {
-        r = in.x;
-        i = in.y;
-    }
+    //Useful
+    template<class O>
+    static Im<O> create(float angle);
 
-    I(float angle) {
-        rotDegrees(angle);
-    }
+    Im rotRad(float angle);
+    Im rotDeg(float angle);
 
-    I(T x, T y) {
-        r = x;
-        i = y;
-    }
+    float angleRad();
+    float angleDeg();
 
-    //Sets this complex number to be a rotation of <angle> degrees
-    I<T> rotDegrees(float angle) {
-        r = cos(angle*DTR);
-        i = sin(angle*DTR);
-        return *this;
-    }
-    //Sets this complex number to be a rotation of <angle> radians
-    I<T> rotRad(float angle) {
-        r = cos(angle);
-        i = sin(angle);
-        return *this;
-    }
+    float mag2();
+    float mag();
 
-    I<T> operator + (I<T>& rhs) {
-        I<T> out;
-        out.r = r + rhs.r;
-        out.i = i + rhs.i;
-        return out;
-    }
+    float modulus();
+    Im argument();
 
-    I<T> operator + (V<T, 2>& rhs) {
-        I<T> out;
-        out.r = r + rhs.x;
-        out.i = i + rhs.y;
-        return out;
-    }
+    //Arithmetic
+    Im add(const Im &rhs); 
+    Im add(const Vec<T, 2> &rhs);
+    Im add(const T rhs);
 
-    I<T> operator - (I<T>& rhs) {
-        I<T> out;
-        out.r = r - rhs.r;
-        out.i = i - rhs.i;
-        return out;
-    }
+    Im added(const Im &rhs);
+    Im added(const Vec<T, 2> &rhs);
+    Im added(const T rhs);
 
-    I<T> operator - (V<T, 2>& rhs) {
-        I<T> out;
-        out.r = r - rhs.x;
-        out.i = i - rhs.y;
-        return out;
-    }
+    Im mul(const Im &rhs);
+    Vec<T, 2> mul(const Vec<T, 2> &rhs);
+    Im mul(const T rhs);
 
-    void operator += (I<T>& rhs) {
-        r += rhs.r;
-        i += rhs.i;
-    }
-    void operator += (V<T, 2>& rhs) {
-        r += rhs.x;
-        i += rhs.y;
-    }
-    void operator -= (I<T>& rhs) {
-        r -= rhs.r;
-        i -= rhs.i;
-    }
-    void operator -= (V<T, 2>& rhs) {
-        r -= rhs.x;
-        i -= rhs.y;
-    }
+    Im mulled(const Im &rhs);
+    Vec<T, 2> mulled(const Vec<T, 2> &rhs);
+    Im mulled(const T rhs);
 
-    void operator *= (T& rhs) {
-        r *= rhs;
-        i *= rhs;
-    }
-    I<T> operator * (T& rhs) {
-        I<T> out;
-        out.r = r * rhs;
-        out.i = i * rhs;
-        return out;
-    }
-    void operator /= (T& rhs) {
-        r /= rhs;
-        i /= rhs;
-    }
-    I<T> operator / (T& rhs) {
-        I<T> out;
-        out.r = r / rhs;
-        out.i = i / rhs;
-        return out;
-    }
-
-    
-    I<T> operator * (I<T> rhs) {
-        return {
-            r * rhs.r - i * rhs.i,
-            r * rhs.i + i * rhs.r
-        };
-    }
-    v2f operator * (v2f rhs) {
-        return {
-            r * rhs.x - i * rhs.y,
-            r * rhs.y + i * rhs.x
-        };
-    }
-    void operator *= (I<T> rhs) {
-        T tr = r;
-        T ti = i;
-        r = tr * rhs.r - ti * rhs.i;
-        i = tr * rhs.i + ti * rhs.r;
-    }
-
-    float angle() {
-        return atan(i / r);
-    }
-    float angleD() {
-        return angle() * DTR;
-    }
-
-    float mag2() {
-        return r*r + i*i;
-    }
-    float mag() {
-        return sqrt(mag2());
-    }
-    float modulus() {
-        return mag();
-    }
-    I<T> arg() {
-        i *= -1;
-        return *this;
-    }
+    //Operator overloads
+    Im operator - () {return(Im<T>{-r, -i});}
+    Im operator + (const Im &rhs) {return(added(rhs));}
+    Im operator + (const Vec<T, 2> &rhs) {return(added(rhs));}
+    Im operator + (const T rhs) {return(added(rhs));}
+    Im operator - (const Im &rhs) {return(added(-rhs));}
+    Im operator - (const Vec<T, 2> &rhs) {return(added(-rhs));}
+    Im operator - (const T rhs) {return(added(rhs));}
+    Im operator * (const Im &rhs) {return(mulled(rhs));}
+    Vec<T, 2> operator * (const Vec<T, 2> &rhs) {return(mulled(rhs));}
+    Im operator * (const T rhs) {return(mulled(rhs));}
+    Im operator / (const T rhs) {return(mulled(1/rhs));}
+    void operator += (const Im &rhs) {add(rhs);}
+    void operator += (const Vec<T, 2> &rhs) {add(rhs);}
+    void operator += (const T rhs) {add(rhs);}
+    void operator -= (const Im &rhs) {add(-rhs);}
+    void operator -= (const Vec<T, 2> &rhs) {add(-rhs);}
+    void operator -= (const T rhs) {add(-rhs);}
+    void operator *= (const Im &rhs) {mul(rhs);}
+    void operator *= (const T rhs) {mul(rhs);}
+    void operator /= (const T rhs) {mul(1/rhs);}
 
 };
-
-typedef I<float> cn;
-
-
-}
