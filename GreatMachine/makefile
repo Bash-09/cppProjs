@@ -7,8 +7,9 @@ OUT = a
 $(OUT): $(OD)/main.o
 	$(CXX) -o $(OUT) $(OD)/main.o $(CFLAGS)
 
-$(OD)/main.o: main.cpp maths.h
+$(OD)/main.o: main.cpp
 	$(CXX) -o $(OD)/main.o main.cpp $(CFLAGS) -c
+
 
 
 clean:
