@@ -156,7 +156,7 @@ bool Main::OnUserUpdate(float fElapsedTime) {
 
     oss.str("");
     oss.clear();
-    oss << "y(t) = " << pa.y << "t^3 + " << pb.y << "t^2 + " << pc.y << "t + " << pd.y;
+    oss << "y(t) = " << -pa.y << "t^3 + " << -pb.y << "t^2 + " << -pc.y << "t + " << pd.y+res.y;
     DrawString(10, 80, oss.str());
 
 

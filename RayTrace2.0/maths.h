@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <cmath>
 
 const float PI = 2*acos(0);
@@ -57,11 +58,14 @@ public:
             vals[i] = rhs;
         }
     }
-    Vec(Vec &rhs) {
+    Vec(const Vec &rhs) {
         int lim = dims;
-        if(rhs.size < lim) lim = rhs.size;
         for(int i = 0; i < lim; i++) {
-            vals[i] = rhs[i];
+            if(lim >= rhs.size) {
+                vals[i] = 0;
+            } else {
+                vals[i] = rhs.vals[i];
+            }
         }
     }
     Vec(const Im<T> &rhs) {
@@ -84,7 +88,6 @@ public:
     ~Vec() {}
 
     void print() {
-        std::cout << std::endl;
         std::cout << "[";
         for(int i = 0; i < dims - 1; i++) {
             std::cout << vals[i] << ", ";
@@ -111,6 +114,15 @@ public:
     Vec normalize() {
         T s = mag();
         div(s);
+        return *this;
+    }
+    Vec normalized() {
+        Vec<T, dims> out;
+        T s = mag();
+        for(int i = 0; i < dims; i++) {
+            out[i] = vals[i]/s;
+        }
+        return out;
     }
     float dot(const Vec &rhs) {
         if(rhs.size != dims) {
@@ -123,6 +135,7 @@ public:
         }
         return total;
     }
+
 
     Vec cross(const Vec &rhs) {
         if(dims != 3 || rhs.size != 3) {
@@ -223,6 +236,13 @@ public:
     }
 
     Vec div(const Vec &rhs) const {
+        for(int i = 0; i < dims; i++) {
+            vals[i] /= rhs[i];
+        }
+        return *this;
+    }
+
+    Vec div(T rhs) {
         for(int i = 0; i < dims; i++) {
             vals[i] /= rhs;
         }
