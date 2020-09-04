@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "C/C++: g++-10 build active file",
+            "command": "/usr/bin/g++-10",
+            "args": [
+                "-g",
+                "${workspaceFolder}/*.cpp",
+                "-o",
+                "main",
+                "-lX11",
+                "-lGL",
+                "-lpthread",
+                "-lpng",
+                "-lstdc++fs",
+                "-std=c++17"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

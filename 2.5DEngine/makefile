@@ -1,22 +1,20 @@
 CXX = g++-10
 CFLAGS = -lX11 -lGL -lpthread -lpng -lstdc++fs -std=c++17 -g -Wall
-
-OD = o
+ODIR = o
 OUT = a
 
-$(OUT): $(OD)/main.o $(OD)/collideables.o $(OD)/player.o
-	$(CXX) -o $(OUT) $(OD)/main.o $(OD)/player.o $(OD)/collideables.o $(CFLAGS) 
+$(OUT): $(ODIR)/main.o $(ODIR)/collideables.o $(ODIR)/player.o 
+	$(CXX) -o $(OUT) $(ODIR)/main.o $(ODIR)/collideables.o $(ODIR)/player.o $(CFLAGS)
 
-$(OD)/main.o: main.cpp pge.h player.h collideables.h
-	$(CXX) -o $(OD)/main.o main.cpp $(CFLAGS) -c
+$(ODIR)/main.o: ./main.cpp ./pge.h ./player.h ./pge.h ./collideables.h ./pge.h ./ray.h ./pge.h ./collideables.h ./pge.h ./ray.h ./pge.h
+	$(CXX) -o $(ODIR)/main.o ./main.cpp $(CFLAGS) -c
 
+$(ODIR)/collideables.o: ./collideables.cpp ./collideables.h ./pge.h ./ray.h ./pge.h ./ray.h ./pge.h
+	$(CXX) -o $(ODIR)/collideables.o ./collideables.cpp $(CFLAGS) -c
 
-$(OD)/player.o: player.cpp player.h collideables.h $(OD)/collideables.o
-	$(CXX) -o $(OD)/player.o player.cpp $(CFLAGS) -c
-
-$(OD)/collideables.o: collideables.cpp collideables.h ray.h
-	$(CXX) -o $(OD)/collideables.o collideables.cpp $(CFLAGS) -c
-
+$(ODIR)/player.o: ./player.cpp ./player.h ./pge.h ./collideables.h ./pge.h ./ray.h ./pge.h
+	$(CXX) -o $(ODIR)/player.o ./player.cpp $(CFLAGS) -c
 
 clean:
-	rm $(OUT) $(OD)/*.o
+	rm $(OUT) `find o -name '*.o'`
+

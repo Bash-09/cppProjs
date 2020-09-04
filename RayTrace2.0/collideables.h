@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "ray.h"
 
 class Sphere : public Collideable {

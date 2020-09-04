@@ -1,16 +1,14 @@
 CXX = g++-10
 CFLAGS = -lX11 -lGL -lpthread -lpng -lstdc++fs -std=c++17 -g -Wall
-
-OD = o
+ODIR = o
 OUT = a
 
-$(OUT): $(OD)/main.o
-	$(CXX) -o $(OUT) $(OD)/main.o $(CFLAGS)
+$(OUT): $(ODIR)/main.o 
+	$(CXX) -o $(OUT) $(ODIR)/main.o $(CFLAGS)
 
-$(OD)/main.o: main.cpp maths.h pge.h
-	$(CXX) -o $(OD)/main.o main.cpp $(CFLAGS) -c
-
-
+$(ODIR)/main.o: ./main.cpp ./maths.h ./pge.h ./pge.h
+	$(CXX) -o $(ODIR)/main.o ./main.cpp $(CFLAGS) -c
 
 clean:
-	rm $(OUT) $(OD)/*.o
+	rm $(OUT) `find o -name '*.o'`
+

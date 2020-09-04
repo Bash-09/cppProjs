@@ -3,15 +3,12 @@ CFLAGS = -lX11 -lGL -lpthread -lpng -lstdc++fs -std=c++17 -g -Wall
 ODIR = o
 OUT = a
 
-$(OUT): $(ODIR)/main.o $(ODIR)/maths.o 
-	$(CXX) -o $(OUT) $(ODIR)/main.o$(ODIR)/maths.o$(CFLAGS)
+$(OUT): $(ODIR)/main.o 
+	$(CXX) -o $(OUT) $(ODIR)/main.o $(CFLAGS)
 
-$(ODIR)/main.o: main.cpp 
-	$(CXX) -o $(OD)/main.o main.cpp $(CFLAGS) -c
-
-$(ODIR)/maths.o: maths.cpp 
-	$(CXX) -o $(OD)/maths.o maths.cpp $(CFLAGS) -c
+$(ODIR)/main.o: ./main.cpp ./pge.h ./maths.h
+	$(CXX) -o $(ODIR)/main.o ./main.cpp $(CFLAGS) -c
 
 clean:
-	rm $(OUT) $(ODIR)/*.o
+	rm $(OUT) `find o -name '*.o'`
 

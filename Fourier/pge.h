@@ -165,7 +165,7 @@
 /*
 
 #define OLC_PGE_APPLICATION
-#include "olcPixelGameEngine.h"
+//#include "olcPixelGameEngine.h"
 
 // Override base class with your custom functionality
 class Example : public olc::PixelGameEngine
@@ -843,11 +843,11 @@ namespace olc
 	the definitions being duplicated.
 
 	If all else fails, create a file called "olcPixelGameEngine.cpp" with the following
-	two lines. Then you can just #include "olcPixelGameEngine.h" as normal without worrying
+	two lines. Then you can just //#include "olcPixelGameEngine.h" as normal without worrying
 	about defining things. Dont forget to include that cpp file as part of your build!
 
 	#define OLC_PGE_APPLICATION
-	#include "olcPixelGameEngine.h"
+	//#include "olcPixelGameEngine.h"
 
 */
 

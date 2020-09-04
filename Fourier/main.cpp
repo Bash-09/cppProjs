@@ -2,7 +2,7 @@
 
 #include "maths.h"
 #include "pge.h"
-#include "iostream"
+#include <iostream>
 
 
 
@@ -112,7 +112,7 @@ bool go = false;
 bool painting = false;
 std::vector<olc::vi2d> points;
 
-int fourierRes = 500;
+int fourierRes = 15;
 void calculate() {
     transform.clear();
 

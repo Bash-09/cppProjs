@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 
 const float PI = 2*acos(0);
 const float RTD = 180/PI;
