@@ -39,9 +39,6 @@ void World::resolve(Ball& b1, Ball& b2) {
     t = t.norm();
     n = n.norm();
 
-    olc::vf2d p1 = b1.pos;
-    olc::vf2d p2 = b2.pos;
-
     float m1 = b1.r;
     float m2 = b2.r;
 
@@ -104,7 +101,7 @@ void World::go(float delta) {
     for(Ball &b : balls) {
         b.move(delta);
 
-        b.applyForce({0, 1}, 10);
+        b.applyForce({0, 1}, 300*delta);
     }
 
 }

@@ -18,7 +18,9 @@ public:
     }
     bool OnUserUpdate(float fElapsedTime) override {
 
-        world.go(fElapsedTime);
+        float delta = fElapsedTime;
+
+        world.go(delta);
         world.render(*this);
 
         return true;
@@ -28,7 +30,7 @@ public:
 
 int main() {
 
-    if(launch.Construct(600, 600, 1, 1))
+    if(launch.Construct(600, 600, 1, 1, false, false))
         launch.Start();
 
 

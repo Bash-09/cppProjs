@@ -9,7 +9,7 @@ Ball::~Ball() {
 
 void Ball::applyForce(olc::vf2d dir, float mag = 1) {
 
-    acc += (dir*mag)/r;
+    acc += (dir*mag);
 
 }
 
