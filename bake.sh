@@ -45,7 +45,6 @@ do
 done
 echo "\$(CFLAGS)" >> makefile
 
-#FIX THE FUCKING RECURSIVE/DIRECTORY HEADER DEPENDANCIES. IT'S NOT WOOORKIIING
 #Parse file for header depends
 dependHeader() {
 	file=$1
