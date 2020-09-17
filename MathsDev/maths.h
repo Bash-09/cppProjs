@@ -356,31 +356,61 @@ public:
                 }
                 cofactors.vals[i][j] = minor.determinant();
                 if((i + j)%2 != 0) {
-                    cofactors.vals[i][j] *= -1;
+                    cofactors.vals[i][j] *= -1; //Apply pos/neg grid mask
                 }
-                if(i == 0) {
-                    determinant += (cofactors.vals[i][j] * vals[i][j]);
-                }
+                determinant += (cofactors.vals[i][j] * vals[i][j]) * (i==0); //Calc determinant from minor matrices
             }
         }
-        std::cout << determinant << std::endl;
+        if(determinant == 0) {
+            std::cout << "Determinant is 0, inverse matrix does not exist!\n";
+            return *this;
+        }
         T invDet = 1/determinant;
-
-        Mat<T, dims> adjugate;
-        for(int i = 0; i < dims; i++) {
+        for(int i = 0; i < dims; i++) { //Multiply components by components of adjugate matrix (reflection of cofactor matrix)
             for(int j = 0; j < dims; j++) {
-                adjugate.vals[i][j] = cofactors.vals[j][i];
-            }
-        }
-        adjugate.print();
-        for(int i = 0; i < dims; i++) {
-            for(int j = 0; j < dims; j++) {
-                vals[i][j] = invDet * adjugate.vals[i][j];
+                vals[i][j] = invDet * cofactors.vals[j][i];
             }
         }
         return *this;
     }
-    Mat inverted();
+
+    Mat inverted() {
+        T determinant = 0;
+        Mat<T, dims> outMat;
+        Mat<T, dims> cofactors;
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+
+                Mat<T, dims-1> minor; //Create matrix of minors
+                for(int m = 0; m < dims-1; m++) {
+                    for(int n = 0; n < dims-1; n++) {
+                        int x = m;
+                        int y = n;
+                        if(x >= i) x++;
+                        if(y >= j) y++;
+
+                        minor.vals[m][n] = vals[x][y];
+                    }
+                }
+                cofactors.vals[i][j] = minor.determinant();
+                if((i + j)%2 != 0) {
+                    cofactors.vals[i][j] *= -1; //Apply pos/neg grid mask
+                }
+                determinant += (cofactors.vals[i][j] * vals[i][j]) * (i==0); //Calc determinant from minor matrices
+            }
+        }
+        if(determinant == 0) {
+            std::cout << "Determinant is 0, inverse matrix does not exist!\n";
+            return outMat;
+        }
+        T invDet = 1/determinant;
+        for(int i = 0; i < dims; i++) { //Multiply components by components of adjugate matrix (reflection of cofactor matrix)
+            for(int j = 0; j < dims; j++) {
+                outMat[i][j] = invDet * cofactors.vals[j][i];
+            }
+        }
+        return outMat;
+    }
 
     T determinant() {
         if constexpr (dims == 1) {
