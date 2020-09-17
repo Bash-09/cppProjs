@@ -355,8 +355,12 @@ public:
                     }
                 }
                 cofactors.vals[i][j] = minor.determinant();
-                if((i + j)%2 != 0) cofactors.vals[i][j] *= -1;
-                determinant += (cofactors.vals[i][j] * vals[i][j]);
+                if((i + j)%2 != 0) {
+                    cofactors.vals[i][j] *= -1;
+                }
+                if(i == 0) {
+                    determinant += (cofactors.vals[i][j] * vals[i][j]);
+                }
             }
         }
         std::cout << determinant << std::endl;
@@ -381,33 +385,23 @@ public:
     T determinant() {
         if constexpr (dims == 1) {
             return vals[0][0];
-        } else if constexpr (dims == 2) {
-            return vals[0][0] * vals[1][1] - vals[1][0] * vals[0][1];
         } else {
-            Mat<T, dims> minors;
-            for(int i = 0; i < dims; i++) {
-                for(int j = 0; j < dims; j++) {
-
-                    Mat<T, dims-1> minor;
-                    for(int m = 0; m < dims-1; m++) {
-                        for(int n = 0; n < dims-1; n++) {
-                            int x = m;
-                            int y = n;
-                            if(x >= i) x++;
-                            if(y >= j) y++;
-
-                            minor.vals[m][n] = vals[x][y];
-                        }
-                    }
-                    minors.vals[i][j] = minor.determinant();
-                    if((i+j)%2 != 0) minors.vals[i][j] *= -1;
-                }
-            }
             T total = 0;
             for(int i = 0; i < dims; i++) {
-                for(int j = 0; j < dims; j++) {
-                    total += vals[i][j] * minors.vals[i][j];
+                
+                Mat<T, dims-1> mat;
+                for(int m = 0; m < dims-1; m++) {
+                    for(int n = 0; n < dims-1; n++) {
+                        int x = m;
+                        int y = n;
+                        if(x >= i) x++;
+                        y++;
+                        mat.vals[m][n] = vals[y][x];
+                    }
                 }
+                int neg = -1;
+                if(i % 2 == 0) neg = 1;
+                total += neg * mat.determinant() * vals[0][i];
             }
             return total;
         }
