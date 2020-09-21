@@ -1,26 +1,44 @@
-#include <iostream>
-#include <thread>
+#include "Platform.h"
 
-#include "maths.h"
-#include "platform_Linux.h"
+/*
 
+Engine would prolly work well as SDL2 + OpenAL if I ever wanna add audio
 
-void thread1() {
+*/
+const int screenWidth = 640;
+const int screenHeight = 480;
 
-    for(int i = 0; i < 50; i++) {
-        std::cout << "Thread2 looping " << i << " times." << std::endl;
-    }
+bool quit = false;
+SDL_Event e;
 
-}
+using namespace Plat;
 
 int main() {
 
-    std::thread(thread1).detach();
-    //thread.detach();
+    if(!init(screenWidth, screenHeight, "Hello World")) return 0;
 
-    for(int i = 0; i < 50; i++) {
-        std::cout << "Thread1 looping " << i << " times." << std::endl;
+    //Main window loop
+    while(!quit) {
+        //Poll events
+        while( SDL_PollEvent( &e ) != 0) {
+            //Quit button
+            if(e.type == SDL_QUIT) {
+                quit = true;
+            }
+            if(e.type == SDL_KEYDOWN) {
+                std::cout << e.key.keysym << "\n";
+            }
+
+        }
+
+
+
     }
+
+
+//        SDL_UpdateWindowSurface( window );
+
+    exit();
 
     return 0;
 }
