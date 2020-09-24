@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Platform/keyboard.h"
+#include "Platform/mouse.h"
 #include <string>
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-namespace Plat {
+namespace Platform {
 
     //Create what we need for our window
     SDL_Window* window = nullptr;

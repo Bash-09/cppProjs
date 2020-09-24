@@ -1,5 +1,8 @@
 #include "Platform.h"
 
+#include <thread>
+#include <chrono>
+
 /*
 
 Engine would prolly work well as SDL2 + OpenAL if I ever wanna add audio
@@ -11,11 +14,13 @@ const int screenHeight = 480;
 bool quit = false;
 SDL_Event e;
 
-using namespace Plat;
+using namespace Platform;
 
 int main() {
 
     if(!init(screenWidth, screenHeight, "Hello World")) return 0;
+
+    
 
     //Main window loop
     while(!quit) {
@@ -26,13 +31,16 @@ int main() {
                 quit = true;
             }
             if(e.type == SDL_KEYDOWN) {
-                std::cout << e.key.keysym << "\n";
+                Keyboard::press(e.key.keysym.sym);
+            }
+            if(e.type == SDL_KEYUP) {
+                Keyboard::release(e.key.keysym.sym);
             }
 
         }
 
-
-
+        std::cout << Keyboard::isPressed(Keyboard::Key::a) << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
 

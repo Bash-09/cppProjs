@@ -6,7 +6,7 @@ OUT = a
 $(OUT): $(ODIR)/main.o 
 	$(CXX) -o $(OUT) $(ODIR)/main.o $(CFLAGS)
 
-$(ODIR)/main.o: ./main.cpp ./Platform.h
+$(ODIR)/main.o: ./main.cpp ./Platform.h ./Platform/keyboard.h ./Platform/mouse.h
 	$(CXX) -o $(ODIR)/main.o ./main.cpp $(CFLAGS) -c
 
 clean:
