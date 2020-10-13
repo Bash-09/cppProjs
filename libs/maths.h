@@ -24,9 +24,9 @@ typedef Vec<double, 2> V2d;
 typedef Vec<double, 3> V3d;
 typedef Vec<double, 4> V4d;
 
-typedef Mat<float, 2> M2f; 
-typedef Mat<float, 3> M3f; 
-typedef Mat<float, 4> M4f; 
+typedef Mat<float, 2> M2; 
+typedef Mat<float, 3> M3; 
+typedef Mat<float, 4> M4; 
 typedef Mat<double, 2> M2d; 
 typedef Mat<double, 3> M3d; 
 typedef Mat<double, 4> M4d; 
@@ -279,6 +279,7 @@ public:
 
 template<class T> Vec<T, 3> cross(const Vec<T, 3> &a, const Vec<T, 3> &b);
 
+
 template<class T, int dims> class Mat {
 private:
 
@@ -287,32 +288,253 @@ public:
 
     T vals[dims][dims] = {};
 
-    Mat();
-    Mat(const Mat<T, dims> &rhs);
-    Mat(T val);
+    Mat() {}
+    Mat(const Mat<T, dims> &rhs) {
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                vals[i][j] = rhs.vals[i][j];
+            }
+        }
+    }
+    Mat(T val) {
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                vals[i][j] = val;
+            }
+        }
+    }
 
-    void print();
+    void print() {
+        std::cout << "\n";
+        for(int i = 0; i < dims; i++) {
+            std::cout << "[";
+            for(int j = 0; j < dims-1; j++) {
+                std::cout << vals[i][j] << ", ";
+            }
+            std::cout << vals[i][dims-1];
+            std::cout << "]" << "\n";
+        }
+    }
 
-    Mat identity();
-    Mat zero();
+    Mat identity() {
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                if(i == j) {
+                    vals[i][j] = 1;
+                } else {
+                    vals[i][j] = 0;
+                }
+            }
+        }
+        return *this;
+    }
+    Mat zero() {
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                vals[i][j] = 0;
+            }
+        }
+        return *this;
+    }
 
-    Mat invert();
+    Mat invert() {
+        T determinant = 0;
+        Mat<T, dims> cofactors;
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+
+                Mat<T, dims-1> minor; //Create matrix of minors
+                for(int m = 0; m < dims-1; m++) {
+                    for(int n = 0; n < dims-1; n++) {
+                        int x = m;
+                        int y = n;
+                        if(x >= i) x++;
+                        if(y >= j) y++;
+
+                        minor.vals[m][n] = vals[x][y];
+                    }
+                }
+                cofactors.vals[i][j] = minor.determinant();
+                if((i + j)%2 != 0) {
+                    cofactors.vals[i][j] *= -1; //Apply pos/neg grid mask
+                }
+                determinant += (cofactors.vals[i][j] * vals[i][j]) * (i==0); //Calc determinant from minor matrices
+            }
+        }
+        if(determinant == 0) {
+            std::cout << "Determinant is 0, inverse matrix does not exist!\n";
+            return *this;
+        }
+        T invDet = 1/determinant;
+        for(int i = 0; i < dims; i++) { //Multiply components by components of adjugate matrix (reflection of cofactor matrix)
+            for(int j = 0; j < dims; j++) {
+                vals[i][j] = invDet * cofactors.vals[j][i];
+            }
+        }
+        return *this;
+    }
+
+    Mat inverted() {
+        T determinant = 0;
+        Mat<T, dims> outMat;
+        Mat<T, dims> cofactors;
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+
+                Mat<T, dims-1> minor; //Create matrix of minors
+                for(int m = 0; m < dims-1; m++) {
+                    for(int n = 0; n < dims-1; n++) {
+                        int x = m;
+                        int y = n;
+                        if(x >= i) x++;
+                        if(y >= j) y++;
+
+                        minor.vals[m][n] = vals[x][y];
+                    }
+                }
+                cofactors.vals[i][j] = minor.determinant();
+                if((i + j)%2 != 0) {
+                    cofactors.vals[i][j] *= -1; //Apply pos/neg grid mask
+                }
+                determinant += (cofactors.vals[i][j] * vals[i][j]) * (i==0); //Calc determinant from minor matrices
+            }
+        }
+        if(determinant == 0) {
+            std::cout << "Determinant is 0, inverse matrix does not exist!\n";
+            return outMat;
+        }
+        T invDet = 1/determinant;
+        for(int i = 0; i < dims; i++) { //Multiply components by components of adjugate matrix (reflection of cofactor matrix)
+            for(int j = 0; j < dims; j++) {
+                outMat[i][j] = invDet * cofactors.vals[j][i];
+            }
+        }
+        return outMat;
+    }
+
+    T determinant() {
+        if constexpr (dims == 1) {
+            return vals[0][0];
+        } else {
+            T total = 0;
+            for(int i = 0; i < dims; i++) {
+                
+                Mat<T, dims-1> mat;
+                for(int m = 0; m < dims-1; m++) {
+                    for(int n = 0; n < dims-1; n++) {
+                        int x = m;
+                        int y = n;
+                        if(x >= i) x++;
+                        y++;
+                        mat.vals[m][n] = vals[y][x];
+                    }
+                }
+                int neg = -1;
+                if(i % 2 == 0) neg = 1;
+                total += neg * mat.determinant() * vals[0][i];
+            }
+            return total;
+        }
+        return 1;
+    }
 
     //Arithmetic
-    Mat add(const T rhs);
-    Mat add(const Mat &rhs);
+    Mat add(const T rhs) {
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                vals[i][j] += rhs;
+            }
+        }
+        return *this;
+    }
+    Mat add(const Mat<T, dims> &rhs) {
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                vals[i][j] += rhs.vals[i][j];
+            }
+        }
+        return *this;
+    }
 
-    Mat added(const T rhs);
-    Mat added(const Mat &rhs);
+    Mat added(const T rhs) {
+        Mat<T, dims> mat;
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                mat.vals[i][j] = vals[i][j] + rhs;
+            }
+        }
+        return mat;
+    }
+    Mat added(const Mat &rhs) {
+        Mat<T, dims> mat;
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                mat.vals[i][j] = vals[i][j] + rhs.vals[i][j];
+            }
+        }
+        return mat;
+    }
 
-    Mat mul(const T rhs);
-    Mat mul(const Mat &rhs);
+    Mat mul(const T rhs) {
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                vals[i][j] *= rhs;
+            }
+        }
+    }
+    Mat mul(const Mat &rhs) {
+        Mat<T, dims> mat;
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
 
-    Mat mulled(const T rhs);
-    Mat mulled(const Mat &rhs);
+                mat.vals[i][j] = 0;
+                for(int k = 0; k < dims; k++) {
+                    mat.vals[i][j] += vals[i][k] * rhs.vals[k][j];
+                }
+
+            }
+        }
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                vals[i][j] = mat.vals[i][j];
+            }
+        }
+        return *this;
+    }
+
+    Mat mulled(const T rhs) {
+        Mat<T, dims> mat;
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                mat.vals[i][j] = vals[i][j] * rhs;
+            }
+        }
+        return mat;
+    }
+    Mat mulled(const Mat &rhs) {
+        Mat<T, dims> mat;
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+
+                mat.vals[i][j] = 0;
+                for(int k = 0; k < dims; k++) {
+                    mat.vals[i][j] += vals[i][k] * rhs.vals[k][j];
+                }
+
+            }
+        }
+        return mat;
+    }
     Vec<T, dims> mulled(const Vec<T, dims> &rhs);
 
     //Operator overloads
+    void operator = (const Mat<T, dims> &rhs) {
+        for(int i = 0; i < dims; i++) {
+            for(int j = 0; j < dims; j++) {
+                vals[i][j] = rhs.vals[i][j];
+            }
+        }
+    }
     Mat operator - () {return(mulled(-1));}
     Mat operator + (const Mat &rhs) {return(added(rhs));}
     Mat operator - (const Mat &rhs) {return(added(-rhs));}
@@ -326,6 +548,8 @@ public:
     void operator *= (const Mat &rhs) {mul(rhs);}
     void operator *= (const T rhs) {mul(rhs);}
     void operator /= (const T rhs) {mul(1/rhs);}
+
+
 
 };
 

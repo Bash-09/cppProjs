@@ -1,6 +1,6 @@
 #Flags for the make file
 CXX="g++-10"
-CFLAGS="-lX11 -lGL -lpthread -lpng -lstdc++fs -std=c++17 -g -Wall"
+CFLAGS="-lX11 -lGL -lpthread -lpng -lstdc++fs -std=c++17 -g -Wall -lSDL2 -lSDL2_image"
 
 ODIR="o"
 OUT="a"
