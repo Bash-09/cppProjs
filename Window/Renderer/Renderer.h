@@ -7,16 +7,12 @@
 
 class Renderer {
 public:
-    Renderer(Window* window);
+    Renderer();
     ~Renderer();
 
     void initGL();
 
-
 private:
-
-    Window* window;
-
 
 
 };

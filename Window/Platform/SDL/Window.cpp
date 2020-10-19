@@ -2,7 +2,8 @@
 
 //SDL does not start initialised
 bool initSDL = false;
-
+SDL_Window* window = nullptr;
+SDL_GLContext glContext = nullptr;
 
 Window::Window() {
 
@@ -43,6 +44,7 @@ void Window::createWindow(const std::string& title, uint32_t screenWidth, uint32
         std::cout << "Warning: VSync not set!\n";
     }
 
+    windowOpen = true;
 }
 
 void Window::updateWindow() {
@@ -52,20 +54,47 @@ void Window::updateWindow() {
 void Window::closeWindow() {
     SDL_DestroyWindow(window);
     SDL_Quit();
+    windowOpen = false;
 }
 
 void Window::quit() {
     SDL_Quit();
 }
 
+bool Window::isWindowOpen() {
+    return windowOpen;
+}
+
 
 int Window::getWidth() {
     int w = 0;
-    SDL_GetWindowSize(this->window, &w, nullptr);
+    SDL_GetWindowSize(window, &w, nullptr);
     return w;
 }
 int Window::getHeight() {
     int h = 0;
-    SDL_GetWindowSize(this->window, nullptr, &h);
+    SDL_GetWindowSize(window, nullptr, &h);
     return h;
+}
+
+SDL_Event e;
+bool Window::getInput(Keyboard* key) {
+    bool exit = false;
+    key->nextFrame();
+    while( SDL_PollEvent( &e ) != 0) {
+        //Quit button
+        if(e.type == SDL_QUIT) {
+            exit = true;
+        }
+        
+        if(e.type == SDL_KEYDOWN) {
+            key->press((Key)e.key.keysym.sym);
+        }
+        if(e.type == SDL_KEYUP) {
+            key->release((Key)e.key.keysym.sym);
+        }
+        
+
+    }
+    return exit;
 }

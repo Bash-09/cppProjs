@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 
+#include "../Engine/Input/Keyboard.h"
 /*
 Start by Creating a window:
 window.createWindow();
@@ -23,13 +24,14 @@ public:
     int getWidth();
     int getHeight();
 
+    bool getInput(Keyboard* eng);
+
     void quit();
 
+    bool isWindowOpen();
+
 private:
-    SDL_Window* window = nullptr;
-    SDL_GLContext glContext = nullptr;
-
-
+    bool windowOpen = false;
 
 };
 

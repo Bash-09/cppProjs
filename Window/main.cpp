@@ -1,31 +1,19 @@
-#include "Engine/Engine.h"
-
-
-void Application::init() {
-
-}
-
-void Application::update(float elapsed) {
-
-}
-
-void Application::render() {
-
-}
-
-
+#include "Apps/Test1/Test1.h"
 
 int main() {
 
-    Application app;
-
     Window window;
-    Renderer rend(&window);
-    window.createWindow();
+    Renderer rend;
 
-    rend.initGL();
+    Test1 app(&window, &rend);
 
-    SDL_Delay(2000);
+    window.createWindow("Test Window", 600, 400, true);
+
+    app.Setup();
+    app.enterLoop();
+
+    std::cout << "Closing!\n";
 
     return 0;
+
 }
