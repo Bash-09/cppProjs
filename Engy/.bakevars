@@ -1,0 +1,1 @@
+-g -Wall -lGL -lpthread -lstdc++fs -std=c++17 -lSDL2 -lSDL2 -I/home/ethan/c++Proj/Engy/src -I/home/ethan/c++Proj/Engy/libs

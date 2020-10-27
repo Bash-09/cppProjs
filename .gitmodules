@@ -1,0 +1,3 @@
+[submodule "Engy/libs/SPDLog"]
+	path = Engy/libs/SPDLog
+	url = https://github.com/gabime/spdlog

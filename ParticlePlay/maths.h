@@ -150,7 +150,7 @@ public:
     }
 
     //Arithmetic
-    Vec add(const Vec& rhs) const {
+    Vec add(const Vec& rhs) {
         int lim = dims;
         if(rhs.size < lim) lim = rhs.size;
         for(int i = 0; i < lim; i++) {
