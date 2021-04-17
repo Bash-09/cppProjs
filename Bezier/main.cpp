@@ -101,18 +101,18 @@ bool Main::OnUserUpdate(float fElapsedTime) {
         }
 
     }
-    if(GetMouse(0).bReleased) {
+    if(GetMouse(0).bReleased) { //Releasing mouse
         clicked = false;
         selected = nullptr;
     }
 
-    if(clicked) {
+    if(clicked) { //Updating point locations
         V2f pos = {(float)GetMouseX(), (float)GetMouseY()};
         *selected = pos;
     }
     NEXT:
 
-    FillCircle(30, 30, 20, olc::GREEN);
+    FillCircle(30, 30, 20, olc::GREEN); //Draw UI
     DrawString(60, 30, "Animate!", olc::GREEN);
 
     std::ostringstream oss;

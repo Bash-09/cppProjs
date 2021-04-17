@@ -1,4 +1,4 @@
-CXX = g++-10
+CXX = g++
 CFLAGS = -lX11 -lGL -lpthread -lpng -lstdc++fs -std=c++17 -g -Wall
 ODIR = o
 OUT = a
