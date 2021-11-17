@@ -1,7 +1,7 @@
 # cppProjs
 
-A collection of projects I made in an effort to learn some basic C++ through a few months in late 2020.
-There is nothing particularly special here but below is a demonstration of some of the notable projects.
+A collection of projects I made in an effort to learn some C++ through the later part of 2020.
+Below is a demonstration of some of the notable projects.
 
 These mostly made use of [One Lone Coder's Pixel Game Engine](https://github.com/OneLoneCoder/olcPixelGameEngine) for the game-loop and rendering stuff.
 
